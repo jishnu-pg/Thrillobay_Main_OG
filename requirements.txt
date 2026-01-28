@@ -1,0 +1,6 @@
+Django==4.2.16
+djangorestframework
+djangorestframework-simplejwt
+Pillow
+django-filter
+django-cors-headers
