@@ -29,29 +29,9 @@ def home(request):
         "admin": "/admin/"
     })
 
-def create_admin_view(request):
-    """
-    Temporary view to create a superuser for Render deployment.
-    Usage: Visit /create-superuser-secure-x9z/
-    """
-    User = get_user_model()
-    username = "admin"
-    email = "admin@thrillobay.com"
-    password = "adminpassword123"  # Change this immediately after login!
-
-    if not User.objects.filter(username=username).exists():
-        try:
-            User.objects.create_superuser(username, email, password)
-            return JsonResponse({"status": "success", "message": f"Superuser '{username}' created successfully."})
-        except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
-    else:
-        return JsonResponse({"status": "warning", "message": f"Superuser '{username}' already exists."})
-
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
-    path('create-superuser-secure-x9z/', create_admin_view), # Temporary secret URL
     path("api/", include("api.urls")),
 ]
 
