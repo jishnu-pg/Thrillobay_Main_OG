@@ -1,0 +1,24 @@
+databases:
+  - name: thrillobay_db
+    databaseName: thrillobay
+    user: thrillobay_user
+
+services:
+  - type: web
+    name: thrillobay-backend
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn config.wsgi
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: 'False'
+      - key: DATABASE_URL
+        fromDatabase:
+          name: thrillobay_db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        value: '*'
