@@ -332,6 +332,7 @@ class BookingItemSerializer(serializers.ModelSerializer):
 
     rating = serializers.SerializerMethodField()
     category_display = serializers.SerializerMethodField()
+    amenities = serializers.SerializerMethodField()
 
     class Meta:
         model = BookingItem
@@ -350,8 +351,14 @@ class BookingItemSerializer(serializers.ModelSerializer):
             
             "check_in", "check_out", "adults", "children",
             "item_image", "property_image",
-            "rating", "category_display"
+            "rating", "category_display", "amenities"
         ]
+
+    def get_amenities(self, obj):
+        if obj.property:
+            return [{"name": a.name, "icon": a.icon.url if a.icon else None} for a in obj.property.amenities.all()]
+        # Can extend for other types if they have amenities
+        return []
 
     def get_rating(self, obj):
         if obj.property:
@@ -411,11 +418,13 @@ class BookingListSerializer(serializers.ModelSerializer):
     items = BookingItemSerializer(many=True, read_only=True)
     booking_date = serializers.DateTimeField(source="created_at", format="%Y-%m-%d")
     refund_status_display = serializers.CharField(source="get_refund_status_display", read_only=True)
+    formatted_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
         fields = [
             "id",
+            "formatted_id",
             "booking_type",
             "status",
             "refund_status",
@@ -427,25 +436,73 @@ class BookingListSerializer(serializers.ModelSerializer):
             "items"
         ]
 
+    def get_formatted_id(self, obj):
+        return f"#{obj.id}"
+
 class BookingDetailSerializer(serializers.ModelSerializer):
     items = BookingItemSerializer(many=True, read_only=True)
     user_name = serializers.CharField(source="user.get_full_name", read_only=True)
     user_phone = serializers.CharField(source="user.phone", read_only=True)
     booking_date = serializers.DateTimeField(source="created_at", format="%d %b %Y, %I:%M %p")
+    formatted_id = serializers.SerializerMethodField()
+    cancellation_policy = serializers.SerializerMethodField()
+    rules = serializers.SerializerMethodField()
+    refund_status_display = serializers.CharField(source="get_refund_status_display", read_only=True)
 
     class Meta:
         model = Booking
         fields = [
             "id",
+            "formatted_id",
             "booking_type",
             "status",
+            "refund_status",
+            "refund_status_display",
+            "cancelled_at",
             "total_amount",
             "amount_paid",
+            "pricing_breakdown",
+            "cancellation_policy",
+            "rules",
             "booking_date",
+            
+            # Contact Info
+            "title", "full_name", "email", "phone", "country_code",
+            "special_requests",
+            
+            # User Account Info
             "user_name",
             "user_phone",
             "items"
         ]
+
+    def get_formatted_id(self, obj):
+        return f"#{obj.id}"
+
+    def get_cancellation_policy(self, obj):
+        # Attempt to get policy from the first item (primary service)
+        first_item = obj.items.first()
+        if first_item:
+            if first_item.property:
+                return first_item.property.cancellation_policy
+            elif first_item.package:
+                return getattr(first_item.package, "cancellation_policy", None)
+            elif first_item.activity:
+                return getattr(first_item.activity, "cancellation_policy", None)
+            elif first_item.cab:
+                return getattr(first_item.cab, "cancellation_policy", None)
+            elif first_item.houseboat:
+                return getattr(first_item.houseboat, "cancellation_policy", None)
+        return None
+
+    def get_rules(self, obj):
+        # Attempt to get rules from the first item (primary service)
+        first_item = obj.items.first()
+        if first_item:
+            if first_item.property:
+                return first_item.property.rules
+            # Can extend for other types if they have rules
+        return None
 
 class BookingTravellerInputSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=100)

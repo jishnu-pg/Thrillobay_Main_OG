@@ -73,6 +73,7 @@ class Property(TimeStampedModel):
         Discount, on_delete=models.SET_NULL, null=True, blank=True, related_name="properties", help_text="Applicable discount"
     )
     rules = models.TextField(blank=True, null=True, help_text="House rules for guests")
+    cancellation_policy = models.TextField(blank=True, null=True, help_text="Cancellation policy for the property")
     
     # Financials (Property Level)
     gst_percent = models.DecimalField(max_digits=5, decimal_places=2, default=12.00, help_text="GST percentage applicable")

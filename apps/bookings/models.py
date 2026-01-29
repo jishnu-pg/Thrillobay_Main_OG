@@ -43,6 +43,9 @@ class Booking(TimeStampedModel):
     amount_paid = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Amount paid so far")
     
     cancelled_at = models.DateTimeField(null=True, blank=True, help_text="Date and time when the booking was cancelled")
+    
+    # Financial Breakdown
+    pricing_breakdown = models.JSONField(default=dict, blank=True, help_text="JSON snapshot of pricing details (base, tax, discount, fees)")
 
     # Contact Details
     title = models.CharField(max_length=10, blank=True, help_text="Title of the contact person")
