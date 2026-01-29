@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+.DS_Store
+.env
+venv/
+env/
+Trilobeenv/
+media/
+staticfiles/
+*.log
+ngrok.log

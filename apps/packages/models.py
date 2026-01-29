@@ -6,27 +6,27 @@ class HolidayPackage(TimeStampedModel):
     """
     Main model for Holiday Packages storing core information.
     """
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True)
-    primary_location = models.CharField(max_length=255)
-    secondary_locations = models.JSONField(default=list, blank=True, null=True)
+    title = models.CharField(max_length=255, help_text="Title of the holiday package")
+    slug = models.SlugField(max_length=255, unique=True, help_text="Unique slug for the package URL")
+    primary_location = models.CharField(max_length=255, help_text="Primary location of the package")
+    secondary_locations = models.JSONField(default=list, blank=True, null=True, help_text="List of secondary locations")
     
-    duration_days = models.PositiveSmallIntegerField()
-    duration_nights = models.PositiveSmallIntegerField()
+    duration_days = models.PositiveSmallIntegerField(help_text="Duration of the package in days")
+    duration_nights = models.PositiveSmallIntegerField(help_text="Duration of the package in nights")
     
-    base_price = models.DecimalField(max_digits=12, decimal_places=2)
+    base_price = models.DecimalField(max_digits=12, decimal_places=2, help_text="Base price for the package")
     discount = models.ForeignKey(
-        Discount, on_delete=models.SET_NULL, null=True, blank=True, related_name="holiday_packages"
+        Discount, on_delete=models.SET_NULL, null=True, blank=True, related_name="holiday_packages", help_text="Applicable discount for the package"
     )
     
-    rating = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
-    review_count = models.PositiveIntegerField(default=0)
+    rating = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True, help_text="Average rating of the package")
+    review_count = models.PositiveIntegerField(default=0, help_text="Total number of reviews")
     
-    short_description = models.TextField()
-    highlights = models.JSONField(default=list, blank=True, null=True)
-    terms_and_conditions = models.TextField()
+    short_description = models.TextField(help_text="Brief summary of the package")
+    highlights = models.JSONField(default=list, blank=True, null=True, help_text="List of package highlights")
+    terms_and_conditions = models.TextField(help_text="Terms and conditions for the package")
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, help_text="Designates whether the package is active")
 
     class Meta:
         ordering = ["-created_at"]
@@ -40,10 +40,10 @@ class PackageImage(TimeStampedModel):
     """
     Gallery for Holiday Packages.
     """
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="packages/gallery/%Y/%m/")
-    is_primary = models.BooleanField(default=False)
-    order = models.PositiveIntegerField(default=0)
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="images", help_text="Related holiday package")
+    image = models.ImageField(upload_to="packages/gallery/%Y/%m/", help_text="Image file for the package")
+    is_primary = models.BooleanField(default=False, help_text="Designates whether this is the primary image")
+    order = models.PositiveIntegerField(default=0, help_text="Ordering of the image")
 
     class Meta:
         ordering = ["order", "created_at"]
@@ -59,9 +59,9 @@ class PackageFeature(TimeStampedModel):
         ("meals", "Meals"),
     ]
     
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="features")
-    feature_type = models.CharField(max_length=20, choices=FEATURE_TYPE_CHOICES)
-    is_included = models.BooleanField(default=True)
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="features", help_text="Related holiday package")
+    feature_type = models.CharField(max_length=20, choices=FEATURE_TYPE_CHOICES, help_text="Type of feature")
+    is_included = models.BooleanField(default=True, help_text="Designates whether the feature is included")
 
     def __str__(self):
         return f"{self.get_feature_type_display()} - {self.package.title}"
@@ -78,17 +78,17 @@ class PackageItinerary(TimeStampedModel):
         ("self", "Self Drive"),
     ]
 
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="itinerary")
-    day_number = models.PositiveSmallIntegerField()
-    title = models.CharField(max_length=255)
-    description = models.TextField()
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="itinerary", help_text="Related holiday package")
+    day_number = models.PositiveSmallIntegerField(help_text="Day number of the itinerary")
+    title = models.CharField(max_length=255, help_text="Title of the itinerary day")
+    description = models.TextField(help_text="Description of the itinerary day")
     
-    from_location = models.CharField(max_length=255, blank=True)
-    to_location = models.CharField(max_length=255, blank=True)
-    transport_type = models.CharField(max_length=20, choices=TRANSPORT_CHOICES, blank=True, null=True)
+    from_location = models.CharField(max_length=255, blank=True, help_text="Starting location")
+    to_location = models.CharField(max_length=255, blank=True, help_text="Destination location")
+    transport_type = models.CharField(max_length=20, choices=TRANSPORT_CHOICES, blank=True, null=True, help_text="Type of transport")
     
     # Optional stay association per day
-    stay_property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, blank=True)
+    stay_property = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, blank=True, help_text="Stay property for the day")
     
     # ADDED: Link to Houseboat for days involving houseboat stays
     stay_houseboat = models.ForeignKey(
@@ -96,12 +96,13 @@ class PackageItinerary(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="package_itineraries"
+        related_name="package_itineraries",
+        help_text="Stay houseboat for the day"
     )
     
-    stay_nights = models.PositiveSmallIntegerField(default=0)
+    stay_nights = models.PositiveSmallIntegerField(default=0, help_text="Number of nights staying")
     
-    order = models.PositiveSmallIntegerField(default=0)
+    order = models.PositiveSmallIntegerField(default=0, help_text="Ordering of the itinerary day")
 
     class Meta:
         ordering = ["day_number", "order"]
@@ -114,11 +115,11 @@ class PackageAccommodation(TimeStampedModel):
     """
     Detailed accommodation information for the package.
     """
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="accommodations")
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    room_type = models.ForeignKey(RoomType, on_delete=models.SET_NULL, null=True, blank=True)
-    nights = models.PositiveSmallIntegerField()
-    meals_included = models.JSONField(default=list, blank=True, null=True)
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="accommodations", help_text="Related holiday package")
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, help_text="Accommodation property")
+    room_type = models.ForeignKey(RoomType, on_delete=models.SET_NULL, null=True, blank=True, help_text="Type of room")
+    nights = models.PositiveSmallIntegerField(help_text="Number of nights")
+    meals_included = models.JSONField(default=list, blank=True, null=True, help_text="List of included meals")
 
     def __str__(self):
         return f"{self.property.name} - {self.package.title}"
@@ -127,8 +128,8 @@ class PackageActivity(TimeStampedModel):
     """
     Activities associated with a package or specific itinerary day.
     """
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="activities")
-    itinerary_day = models.ForeignKey(PackageItinerary, on_delete=models.SET_NULL, null=True, blank=True, related_name="activities")
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="activities", help_text="Related holiday package")
+    itinerary_day = models.ForeignKey(PackageItinerary, on_delete=models.SET_NULL, null=True, blank=True, related_name="activities", help_text="Related itinerary day")
     
     # ADDED: Link to core Activity model for pricing and reusability
     activity = models.ForeignKey(
@@ -136,12 +137,13 @@ class PackageActivity(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="package_activities"
+        related_name="package_activities",
+        help_text="Related core activity"
     )
     
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    image = models.ImageField(upload_to="packages/activities/%Y/%m/", null=True, blank=True)
+    name = models.CharField(max_length=255, help_text="Name of the activity")
+    description = models.TextField(help_text="Description of the activity")
+    image = models.ImageField(upload_to="packages/activities/%Y/%m/", null=True, blank=True, help_text="Image for the activity")
 
     class Meta:
         verbose_name_plural = "Package Activities"
@@ -160,8 +162,8 @@ class PackageTransfer(TimeStampedModel):
         ("flight", "Flight"),
     ]
 
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="transfers")
-    itinerary_day = models.ForeignKey(PackageItinerary, on_delete=models.SET_NULL, null=True, blank=True, related_name="transfers")
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="transfers", help_text="Related holiday package")
+    itinerary_day = models.ForeignKey(PackageItinerary, on_delete=models.SET_NULL, null=True, blank=True, related_name="transfers", help_text="Related itinerary day")
     
     # ADDED: Link to CabCategory for structured transport info
     cab_category = models.ForeignKey(
@@ -169,11 +171,12 @@ class PackageTransfer(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="package_transfers"
+        related_name="package_transfers",
+        help_text="Related cab category"
     )
     
-    transport_type = models.CharField(max_length=20, choices=TRANSPORT_CHOICES)
-    description = models.TextField()
+    transport_type = models.CharField(max_length=20, choices=TRANSPORT_CHOICES, help_text="Type of transport")
+    description = models.TextField(help_text="Description of the transfer")
 
     def __str__(self):
         return f"{self.get_transport_type_display()} Transfer - {self.package.title}"
@@ -182,9 +185,9 @@ class PackageInclusion(TimeStampedModel):
     """
     Inclusions and exclusions for the holiday package.
     """
-    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="inclusions")
-    text = models.TextField()
-    is_included = models.BooleanField(default=True)
+    package = models.ForeignKey(HolidayPackage, on_delete=models.CASCADE, related_name="inclusions", help_text="Related holiday package")
+    text = models.TextField(help_text="Inclusion/Exclusion text")
+    is_included = models.BooleanField(default=True, help_text="Designates whether this is an inclusion")
 
     def __str__(self):
         status = "Inclusion" if self.is_included else "Exclusion"

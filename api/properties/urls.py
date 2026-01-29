@@ -1,17 +1,10 @@
 from django.urls import path
 from .views import (
-    PropertyListAPIView,
-    PropertyDetailAPIView,
-    PropertyRoomTypeListAPIView,
+    HotelDetailAPIView,
+    HotelRoomAvailabilityAPIView,
 )
 
 urlpatterns = [
-    path("", PropertyListAPIView.as_view(), name="property-list"),
-    path("<int:pk>/", PropertyDetailAPIView.as_view(), name="property-detail"),
-    path(
-        "<int:pk>/room-types/",
-        PropertyRoomTypeListAPIView.as_view(),
-        name="property-room-types",
-    ),
+    path("<int:pk>/", HotelDetailAPIView.as_view(), name="hotel-detail"),
+    path("<int:pk>/rooms/", HotelRoomAvailabilityAPIView.as_view(), name="hotel-rooms"),
 ]
-

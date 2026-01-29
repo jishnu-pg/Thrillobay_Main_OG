@@ -64,7 +64,7 @@ class CabAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ("Basic Info", {
-            "fields": ("title", "category", "capacity", "luggage_capacity", "is_active")
+            "fields": ("title", "category", "location", "capacity", "luggage_capacity", "is_active")
         }),
         ("Technical Specs", {
             "fields": ("fuel_type", "is_ac")
@@ -72,12 +72,16 @@ class CabAdmin(admin.ModelAdmin):
         ("Pricing Configuration", {
             "fields": (
                 "base_price", 
+                "discount",
                 "price_per_km", 
                 "included_kms", 
                 "extra_km_fare", 
                 "driver_allowance", 
                 "free_waiting_time_minutes"
             )
+        }),
+        ("Policies", {
+            "fields": ("cancellation_policy",)
         }),
     )
 

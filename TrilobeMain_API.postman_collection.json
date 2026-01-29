@@ -1,1008 +1,1569 @@
 {
-	"info": {
-		"_postman_id": "60e77a67-d99c-4e6a-8abc-aad032573914",
-		"name": "TrilobeMain API - OTP Based",
-		"description": "OTP-based authentication API collection for TrilobeMain Django project (No passwords required)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Home",
-			"item": [
-				{
-					"name": "Global Search",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/home/search/?type=hotel&destination=Wayanad",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"home",
-								"search",
-								""
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "hotel",
-									"description": "hotel, homestay, package, houseboat, activity, cab"
-								},
-								{
-									"key": "destination",
-									"value": "Wayanad"
-								}
-							]
-						},
-						"description": "Unified search API. Required param 'type' (hotel, homestay, package, houseboat, activity, cab). Optional filters: destination, price_min, price_max, capacity, etc."
-					},
-					"response": [
-						{
-							"name": "Hotel Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/home/search/?type=hotel&destination=Wayanad",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"api",
-										"home",
-										"search",
-										""
-									],
-									"query": [
-										{
-											"key": "type",
-											"value": "hotel"
-										},
-										{
-											"key": "destination",
-											"value": "Wayanad"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"type\": \"hotel\",\n    \"results\": [\n        {\n            \"id\": 1,\n            \"name\": \"Saptha Resort\",\n            \"location\": \"Sulthan Bathery, Wayanad\",\n            \"price_from\": \"8000.00\",\n            \"rating\": \"5.0\",\n            \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/resort1.jpg\",\n            \"property_type\": \"resort\"\n        }\n    ],\n    \"meta\": {\n        \"total\": 1\n    }\n}"
-						}
-					]
-				},
-				{
-					"name": "Popular Hotels",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/home/popular-hotels/",
-							"path": [
-								"api",
-								"home",
-								"popular-hotels",
-								""
-							]
-						},
-						"description": "Get top 8 popular hotels and resorts for the home page cards."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/home/popular-hotels/",
-									"path": [
-										"api",
-										"home",
-										"popular-hotels",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 12,\n        \"name\": \"Saptha Resort and Spa\",\n        \"city\": \"Sulthan Bathery\",\n        \"state\": \"Wayanad\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"price_from\": \"8000.00\",\n        \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/resort1.jpg\",\n        \"property_type\": \"resort\"\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "Popular Homestays",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/home/popular-homestays/",
-							"path": [
-								"api",
-								"home",
-								"popular-homestays",
-								""
-							]
-						},
-						"description": "Get top 8 popular homestays and villas for the home page cards."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/home/popular-homestays/",
-									"path": [
-										"api",
-										"home",
-										"popular-homestays",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 15,\n        \"name\": \"Mountain View Villa\",\n        \"city\": \"Munnar\",\n        \"state\": \"Kerala\",\n        \"rating\": \"4.8\",\n        \"rating_count\": 50,\n        \"price_from\": \"4500.00\",\n        \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/villa1.jpg\",\n        \"property_type\": \"villa\"\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "Popular Holiday Packages",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/home/popular-holiday-packages/",
-							"path": [
-								"api",
-								"home",
-								"popular-holiday-packages",
-								""
-							]
-						},
-						"description": "Get top 8 popular holiday packages for the home page cards."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/home/popular-holiday-packages/",
-									"path": [
-										"api",
-										"home",
-										"popular-holiday-packages",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 7,\n        \"title\": \"Dubai Winter Special Deal\",\n        \"duration_days\": 5,\n        \"duration_nights\": 4,\n        \"primary_location\": \"Dubai\",\n        \"price\": \"80000.00\",\n        \"discounted_price\": \"72000.00\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"primary_image\": \"http://127.0.0.1:8000/media/packages/gallery/dubai1.jpg\"\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "Popular Houseboats",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/home/popular-houseboats/",
-							"path": [
-								"api",
-								"home",
-								"popular-houseboats",
-								""
-							]
-						},
-						"description": "Get top 8 popular houseboats for the home page cards."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/home/popular-houseboats/",
-									"path": [
-										"api",
-										"home",
-										"popular-houseboats",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 12,\n        \"name\": \"3 Bedrooms Luxury Houseboat\",\n        \"bedrooms\": 3,\n        \"trip_type\": \"Day & Night\",\n        \"base_price\": \"16000.00\",\n        \"discounted_price\": \"14000.00\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"primary_image\": \"http://127.0.0.1:8000/media/houseboats/gallery/hb1.jpg\"\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "Popular Activities",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/home/popular-activities/",
-							"path": [
-								"api",
-								"home",
-								"popular-activities",
-								""
-							]
-						},
-						"description": "Get top 8 popular activities for the home page cards."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/home/popular-activities/",
-									"path": [
-										"api",
-										"home",
-										"popular-activities",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 21,\n        \"title\": \"Brahmagiri Hills Trek\",\n        \"location\": \"Thirunelli, Wayanad\",\n        \"duration_label\": \"1 Day\",\n        \"base_price\": \"2000.00\",\n        \"discounted_price\": \"1800.00\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"primary_image\": \"http://127.0.0.1:8000/media/activities/gallery/trek1.jpg\"\n    }\n]"
-						}
-					]
-				}
-			],
-			"description": "Endpoints for home page sections"
-		},
-		{
-			"name": "Listings",
-			"item": [
-				{
-					"name": "Hotels Listing",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/listings/hotels/?destination=Wayanad&price_min=2000&price_max=10000&sort_by=rating",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"listings",
-								"hotels",
-								""
-							],
-							"query": [
-								{
-									"key": "destination",
-									"value": "Wayanad",
-									"description": "Search by city or state"
-								},
-								{
-									"key": "price_min",
-									"value": "2000",
-									"description": "Minimum price filter"
-								},
-								{
-									"key": "price_max",
-									"value": "10000",
-									"description": "Maximum price filter"
-								},
-								{
-									"key": "star_rating",
-									"value": "5",
-									"description": "Filter by star rating (1-5)",
-									"disabled": true
-								},
-								{
-									"key": "user_rating",
-									"value": "4",
-									"description": "Minimum user review rating",
-									"disabled": true
-								},
-								{
-									"key": "sort_by",
-									"value": "rating",
-									"description": "price_asc, price_desc, rating"
-								},
-								{
-									"key": "page",
-									"value": "1",
-									"description": "Page number",
-									"disabled": true
-								},
-								{
-									"key": "page_size",
-									"value": "10",
-									"description": "Results per page",
-									"disabled": true
-								}
-							]
-						},
-						"description": "Get paginated list of hotels and resorts with filters and sorting."
-					},
-					"response": []
-				},
-				{
-					"name": "Homestays Listing",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/listings/homestays/?destination=Wayanad&sort_by=price_asc",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"listings",
-								"homestays",
-								""
-							],
-							"query": [
-								{
-									"key": "destination",
-									"value": "Wayanad",
-									"description": "Search by city or state"
-								},
-								{
-									"key": "price_min",
-									"value": "1000",
-									"description": "Minimum price filter",
-									"disabled": true
-								},
-								{
-									"key": "price_max",
-									"value": "5000",
-									"description": "Maximum price filter",
-									"disabled": true
-								},
-								{
-									"key": "user_rating",
-									"value": "4",
-									"description": "Minimum user review rating",
-									"disabled": true
-								},
-								{
-									"key": "sort_by",
-									"value": "price_asc",
-									"description": "price_asc, price_desc, rating"
-								}
-							]
-						},
-						"description": "Get paginated list of homestays and villas."
-					},
-					"response": []
-				},
-				{
-					"name": "Packages Listing",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/listings/packages/?destination=Kerala&sort_by=rating",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"listings",
-								"packages",
-								""
-							],
-							"query": [
-								{
-									"key": "destination",
-									"value": "Kerala",
-									"description": "Search by location"
-								},
-								{
-									"key": "price_min",
-									"value": "10000",
-									"description": "Minimum price filter",
-									"disabled": true
-								},
-								{
-									"key": "price_max",
-									"value": "50000",
-									"description": "Maximum price filter",
-									"disabled": true
-								},
-								{
-									"key": "duration_days",
-									"value": "5",
-									"description": "Filter by exact duration in days",
-									"disabled": true
-								},
-								{
-									"key": "sort_by",
-									"value": "rating",
-									"description": "price_asc, price_desc, rating"
-								}
-							]
-						},
-						"description": "Get paginated list of holiday packages."
-					},
-					"response": []
-				},
-				{
-					"name": "Houseboats Listing",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/listings/houseboats/?destination=Alleppey&bedroom_count=2",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"listings",
-								"houseboats",
-								""
-							],
-							"query": [
-								{
-									"key": "destination",
-									"value": "Alleppey",
-									"description": "Search by location"
-								},
-								{
-									"key": "bedroom_count",
-									"value": "2",
-									"description": "Filter by number of bedrooms"
-								},
-								{
-									"key": "price_min",
-									"value": "5000",
-									"description": "Minimum price filter",
-									"disabled": true
-								},
-								{
-									"key": "price_max",
-									"value": "20000",
-									"description": "Maximum price filter",
-									"disabled": true
-								},
-								{
-									"key": "sort_by",
-									"value": "rating",
-									"description": "price_asc, price_desc, rating"
-								}
-							]
-						},
-						"description": "Get paginated list of houseboats."
-					},
-					"response": []
-				},
-				{
-					"name": "Activities Listing",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/listings/activities/?destination=Wayanad&difficulty=easy",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"listings",
-								"activities",
-								""
-							],
-							"query": [
-								{
-									"key": "destination",
-									"value": "Wayanad",
-									"description": "Search by location"
-								},
-								{
-									"key": "difficulty",
-									"value": "easy",
-									"description": "easy, moderate, hard"
-								},
-								{
-									"key": "price_min",
-									"value": "500",
-									"description": "Minimum price filter",
-									"disabled": true
-								},
-								{
-									"key": "price_max",
-									"value": "5000",
-									"description": "Maximum price filter",
-									"disabled": true
-								},
-								{
-									"key": "sort_by",
-									"value": "rating",
-									"description": "price_asc, price_desc, rating"
-								}
-							]
-						},
-						"description": "Get paginated list of activities."
-					},
-					"response": []
-				},
-				{
-					"name": "Cabs Listing",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/listings/cabs/?seating_capacity=4&fuel_type=diesel",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"listings",
-								"cabs",
-								""
-							],
-							"query": [
-								{
-									"key": "seating_capacity",
-									"value": "4",
-									"description": "Minimum seating capacity"
-								},
-								{
-									"key": "fuel_type",
-									"value": "diesel",
-									"description": "petrol, diesel, cng"
-								},
-								{
-									"key": "price_min",
-									"value": "1000",
-									"description": "Minimum price filter",
-									"disabled": true
-								},
-								{
-									"key": "price_max",
-									"value": "5000",
-									"description": "Maximum price filter",
-									"disabled": true
-								},
-								{
-									"key": "sort_by",
-									"value": "price_asc",
-									"description": "price_asc, price_desc"
-								}
-							]
-						},
-						"description": "Get paginated list of cabs."
-					},
-					"response": []
-				}
-			],
-			"description": "Endpoints for search result listing pages across all verticals."
-		},
-		{
-			"name": "Authentication",
-			"item": [
-				{
-					"name": "Register - Send OTP",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 201) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"otp\", jsonData.otp);",
-									"    pm.environment.set(\"phone\", jsonData.phone);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"1234567890\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/auth/register/",
-							"path": [
-								"api",
-								"auth",
-								"register",
-								""
-							]
-						},
-						"description": "Register a new user by sending OTP to phone number. No password required."
-					},
-					"response": []
-				},
-				{
-					"name": "Login - Send OTP",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"otp\", jsonData.otp);",
-									"    pm.environment.set(\"phone\", jsonData.phone);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"1234567890\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/auth/login/",
-							"path": [
-								"api",
-								"auth",
-								"login",
-								""
-							]
-						},
-						"description": "Login by sending OTP to phone number. No password required."
-					},
-					"response": []
-				},
-				{
-					"name": "Verify OTP",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"access_token\", jsonData.access);",
-									"    pm.environment.set(\"refresh_token\", jsonData.refresh);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"phone\": \"{{phone}}\",\n    \"otp\": \"{{otp}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/auth/verify-otp/",
-							"path": [
-								"api",
-								"auth",
-								"verify-otp",
-								""
-							]
-						},
-						"description": "Verify OTP and get JWT tokens. Use this after register or login."
-					},
-					"response": []
-				}
-			],
-			"description": "OTP-based authentication endpoints (No passwords)"
-		},
-		{
-			"name": "Properties",
-			"item": [
-				{
-					"name": "List Properties",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/properties/",
-							"path": [
-								"api",
-								"properties",
-								""
-							]
-						},
-						"description": "Get list of all properties. Returns basic property information."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/properties/",
-									"path": [
-										"api",
-										"properties",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Grand Hotel\",\n        \"city\": \"Mumbai\",\n        \"state\": \"Maharashtra\",\n        \"rating\": 4.5,\n        \"property_type\": \"hotel\",\n        \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/hotel1.jpg\"\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Beach Resort\",\n        \"city\": \"Goa\",\n        \"state\": \"Goa\",\n        \"rating\": 4.8,\n        \"property_type\": \"resort\",\n        \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/resort1.jpg\"\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "Property Detail",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"property_id\", jsonData.id);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/properties/{{property_id}}/",
-							"path": [
-								"api",
-								"properties",
-								"{{property_id}}",
-								""
-							]
-						},
-						"description": "Get detailed information about a specific property including all room types."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/properties/1/",
-									"path": [
-										"api",
-										"properties",
-										"1",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": 1,\n    \"name\": \"Grand Hotel\",\n    \"city\": \"Mumbai\",\n    \"state\": \"Maharashtra\",\n    \"rating\": 4.5,\n    \"property_type\": \"hotel\",\n    \"description\": \"Luxury hotel in the heart of Mumbai with world-class amenities.\",\n    \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/hotel1.jpg\",\n    \"images\": [\n        {\n            \"id\": 1,\n            \"image\": \"http://127.0.0.1:8000/media/properties/gallery/hotel1.jpg\",\n            \"is_primary\": true,\n            \"order\": 1\n        }\n    ],\n    \"room_types\": [\n        {\n            \"id\": 1,\n            \"name\": \"Deluxe Room\",\n            \"max_guests\": 2,\n            \"base_price\": \"5000.00\",\n            \"gst_percent\": \"12.00\",\n            \"gst_amount\": \"600.00\",\n            \"final_price\": \"5600.00\",\n            \"has_breakfast\": true,\n            \"primary_image\": \"http://127.0.0.1:8000/media/room_types/gallery/deluxe1.jpg\",\n            \"images\": [\n                {\n                    \"id\": 1,\n                    \"image\": \"http://127.0.0.1:8000/media/room_types/gallery/deluxe1.jpg\",\n                    \"is_primary\": true,\n                    \"order\": 1\n                }\n            ]\n        }\n    ]\n}"
-						}
-					]
-				},
-				{
-					"name": "Property Room Types",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/properties/{{property_id}}/room-types/",
-							"path": [
-								"api",
-								"properties",
-								"{{property_id}}",
-								"room-types",
-								""
-							]
-						},
-						"description": "Get list of room types for a specific property."
-					},
-					"response": [
-						{
-							"name": "Success Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/api/properties/1/room-types/",
-									"path": [
-										"api",
-										"properties",
-										"1",
-										"room-types",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Deluxe Room\",\n        \"max_guests\": 2,\n        \"base_price\": \"5000.00\",\n        \"gst_percent\": \"12.00\",\n        \"gst_amount\": \"600.00\",\n        \"final_price\": \"5600.00\",\n        \"has_breakfast\": true,\n        \"primary_image\": \"http://127.0.0.1:8000/media/room_types/gallery/deluxe1.jpg\",\n        \"images\": [\n            {\n                \"id\": 1,\n                \"image\": \"http://127.0.0.1:8000/media/room_types/gallery/deluxe1.jpg\",\n                \"is_primary\": true,\n                \"order\": 1\n            }\n        ]\n    }\n]"
-						}
-					]
-				}
-			],
-			"description": "Read-only property endpoints"
-		},
-		{
-			"name": "Holiday Packages",
-			"item": [
-				{
-					"name": "Package Detail",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/holiday-packages/{{package_slug}}/",
-							"path": [
-								"api",
-								"holiday-packages",
-								"{{package_slug}}",
-								""
-							]
-						},
-						"description": "Get full details of a single holiday package by its slug including itinerary, accommodation, and inclusions."
-					},
-					"response": []
-				}
-			],
-			"description": "Endpoints for holiday packages management and detail viewing."
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://127.0.0.1:8000",
-			"type": "string"
-		},
-		{
-			"key": "package_slug",
-			"value": "kerala-honeymoon-special",
-			"type": "string"
-		}
-	]
+    "info": {
+        "_postman_id": "60e77a67-d99c-4e6a-8abc-aad032573914",
+        "name": "TrilobeMain API - OTP Based",
+        "description": "OTP-based authentication API collection for TrilobeMain Django project (No passwords required)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Home",
+            "item": [
+                {
+                    "name": "Global Search",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/home/search/?type=hotel&destination=Wayanad",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "home",
+                                "search",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "type",
+                                    "value": "hotel",
+                                    "description": "hotel, homestay, package, houseboat, activity, cab"
+                                },
+                                {
+                                    "key": "destination",
+                                    "value": "Wayanad"
+                                }
+                            ]
+                        },
+                        "description": "Unified search API. Required param 'type' (hotel, homestay, package, houseboat, activity, cab). Optional filters: destination, price_min, price_max, capacity, etc."
+                    },
+                    "response": [
+                        {
+                            "name": "Hotel Success",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/home/search/?type=hotel&destination=Wayanad",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "home",
+                                        "search",
+                                        ""
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "type",
+                                            "value": "hotel"
+                                        },
+                                        {
+                                            "key": "destination",
+                                            "value": "Wayanad"
+                                        }
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "{\n    \"type\": \"hotel\",\n    \"results\": [\n        {\n            \"id\": 1,\n            \"name\": \"Saptha Resort\",\n            \"location\": \"Sulthan Bathery, Wayanad\",\n            \"price_from\": \"8000.00\",\n            \"rating\": \"5.0\",\n            \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/resort1.jpg\",\n            \"property_type\": \"resort\"\n        }\n    ],\n    \"meta\": {\n        \"total\": 1\n    }\n}"
+                        }
+                    ]
+                },
+                {
+                    "name": "Popular Hotels",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/home/popular-hotels/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "home",
+                                "popular-hotels",
+                                ""
+                            ]
+                        },
+                        "description": "Get top 8 popular hotels and resorts for the home page cards."
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/home/popular-hotels/",
+                                    "path": [
+                                        "api",
+                                        "home",
+                                        "popular-hotels",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 12,\n        \"name\": \"Saptha Resort and Spa\",\n        \"city\": \"Sulthan Bathery\",\n        \"state\": \"Wayanad\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"price_from\": \"8000.00\",\n        \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/resort1.jpg\",\n        \"property_type\": \"resort\"\n    }\n]"
+                        }
+                    ]
+                },
+                {
+                    "name": "Popular Homestays",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/home/popular-homestays/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "home",
+                                "popular-homestays",
+                                ""
+                            ]
+                        },
+                        "description": "Get top 8 popular homestays and villas for the home page cards."
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/home/popular-homestays/",
+                                    "path": [
+                                        "api",
+                                        "home",
+                                        "popular-homestays",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 15,\n        \"name\": \"Mountain View Villa\",\n        \"city\": \"Munnar\",\n        \"state\": \"Kerala\",\n        \"rating\": \"4.8\",\n        \"rating_count\": 50,\n        \"price_from\": \"4500.00\",\n        \"primary_image\": \"http://127.0.0.1:8000/media/properties/gallery/villa1.jpg\",\n        \"property_type\": \"villa\"\n    }\n]"
+                        }
+                    ]
+                },
+                {
+                    "name": "Popular Holiday Packages",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/home/popular-holiday-packages/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "home",
+                                "popular-holiday-packages",
+                                ""
+                            ]
+                        },
+                        "description": "Get top 8 popular holiday packages for the home page cards."
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/home/popular-holiday-packages/",
+                                    "path": [
+                                        "api",
+                                        "home",
+                                        "popular-holiday-packages",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 7,\n        \"title\": \"Dubai Winter Special Deal\",\n        \"duration_days\": 5,\n        \"duration_nights\": 4,\n        \"primary_location\": \"Dubai\",\n        \"price\": \"80000.00\",\n        \"discounted_price\": \"72000.00\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"primary_image\": \"http://127.0.0.1:8000/media/packages/gallery/dubai1.jpg\"\n    }\n]"
+                        }
+                    ]
+                },
+                {
+                    "name": "Popular Houseboats",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/home/popular-houseboats/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "home",
+                                "popular-houseboats",
+                                ""
+                            ]
+                        },
+                        "description": "Get top 8 popular houseboats for the home page cards."
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/home/popular-houseboats/",
+                                    "path": [
+                                        "api",
+                                        "home",
+                                        "popular-houseboats",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 12,\n        \"name\": \"3 Bedrooms Luxury Houseboat\",\n        \"bedrooms\": 3,\n        \"trip_type\": \"Day & Night\",\n        \"base_price\": \"16000.00\",\n        \"discounted_price\": \"14000.00\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"primary_image\": \"http://127.0.0.1:8000/media/houseboats/gallery/hb1.jpg\"\n    }\n]"
+                        }
+                    ]
+                },
+                {
+                    "name": "Popular Activities",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/home/popular-activities/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "home",
+                                "popular-activities",
+                                ""
+                            ]
+                        },
+                        "description": "Get top 8 popular activities for the home page cards."
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/home/popular-activities/",
+                                    "path": [
+                                        "api",
+                                        "home",
+                                        "popular-activities",
+                                        ""
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 21,\n        \"title\": \"Brahmagiri Hills Trek\",\n        \"location\": \"Thirunelli, Wayanad\",\n        \"duration_label\": \"1 Day\",\n        \"base_price\": \"2000.00\",\n        \"discounted_price\": \"1800.00\",\n        \"rating\": \"5.0\",\n        \"rating_count\": 100,\n        \"primary_image\": \"http://127.0.0.1:8000/media/activities/gallery/trek1.jpg\"\n    }\n]"
+                        }
+                    ]
+                }
+            ],
+            "description": "Endpoints for home page sections"
+        },
+        {
+            "name": "Listings",
+            "item": [
+                {
+                    "name": "Hotels Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/hotels/?destination=Wayanad&price_min=2000&price_max=10000&sort_by=rating",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "hotels",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "destination",
+                                    "value": "Wayanad",
+                                    "description": "Search by city or state"
+                                },
+                                {
+                                    "key": "price_min",
+                                    "value": "2000",
+                                    "description": "Minimum price filter"
+                                },
+                                {
+                                    "key": "price_max",
+                                    "value": "10000",
+                                    "description": "Maximum price filter"
+                                },
+                                {
+                                    "key": "star_rating",
+                                    "value": "5",
+                                    "description": "Filter by star rating (1-5)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "user_rating",
+                                    "value": "4",
+                                    "description": "Minimum user review rating",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "rating",
+                                    "description": "price_asc, price_desc, rating"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "page_size",
+                                    "value": "10",
+                                    "description": "Results per page",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of hotels and resorts with filters and sorting."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Homestays Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/homestays/?destination=Wayanad&sort_by=price_asc",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "homestays",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "destination",
+                                    "value": "Wayanad",
+                                    "description": "Search by city or state"
+                                },
+                                {
+                                    "key": "price_min",
+                                    "value": "1000",
+                                    "description": "Minimum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "price_max",
+                                    "value": "5000",
+                                    "description": "Maximum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "user_rating",
+                                    "value": "4",
+                                    "description": "Minimum user review rating",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "price_asc",
+                                    "description": "price_asc, price_desc, rating"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of homestays and villas."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Packages Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/packages/?destination=Kerala&sort_by=rating",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "packages",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "destination",
+                                    "value": "Kerala",
+                                    "description": "Search by location"
+                                },
+                                {
+                                    "key": "price_min",
+                                    "value": "10000",
+                                    "description": "Minimum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "price_max",
+                                    "value": "50000",
+                                    "description": "Maximum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "duration_days",
+                                    "value": "5",
+                                    "description": "Filter by exact duration in days",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "rating",
+                                    "description": "price_asc, price_desc, rating"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of holiday packages."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Houseboats Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/houseboats/?destination=Alleppey&bedroom_count=2",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "houseboats",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "destination",
+                                    "value": "Alleppey",
+                                    "description": "Search by location"
+                                },
+                                {
+                                    "key": "bedroom_count",
+                                    "value": "2",
+                                    "description": "Filter by number of bedrooms"
+                                },
+                                {
+                                    "key": "price_min",
+                                    "value": "5000",
+                                    "description": "Minimum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "price_max",
+                                    "value": "20000",
+                                    "description": "Maximum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "rating",
+                                    "description": "price_asc, price_desc, rating"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of houseboats."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Activities Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/activities/?destination=Wayanad&difficulty=easy",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "activities",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "destination",
+                                    "value": "Wayanad",
+                                    "description": "Search by location"
+                                },
+                                {
+                                    "key": "difficulty",
+                                    "value": "easy",
+                                    "description": "easy, moderate, hard"
+                                },
+                                {
+                                    "key": "price_min",
+                                    "value": "500",
+                                    "description": "Minimum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "price_max",
+                                    "value": "5000",
+                                    "description": "Maximum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "rating",
+                                    "description": "price_asc, price_desc, rating"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of activities."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Cabs Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/cabs/?seating_capacity=4&fuel_type=diesel",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "cabs",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "seating_capacity",
+                                    "value": "4",
+                                    "description": "Minimum seating capacity"
+                                },
+                                {
+                                    "key": "fuel_type",
+                                    "value": "diesel",
+                                    "description": "petrol, diesel, cng"
+                                },
+                                {
+                                    "key": "price_min",
+                                    "value": "1000",
+                                    "description": "Minimum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "price_max",
+                                    "value": "5000",
+                                    "description": "Maximum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sort_by",
+                                    "value": "price_asc",
+                                    "description": "price_asc, price_desc"
+                                }
+                            ]
+                        },
+                        "description": "Get paginated list of cabs."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for search result listing pages across all verticals."
+        },
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Register - Send OTP",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"otp\", jsonData.otp);",
+                                    "    pm.environment.set(\"phone\", jsonData.phone);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"phone\": \"1234567890\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register",
+                                ""
+                            ]
+                        },
+                        "description": "Register a new user by sending OTP to phone number. No password required."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login - Send OTP",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"otp\", jsonData.otp);",
+                                    "    pm.environment.set(\"phone\", jsonData.phone);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"phone\": \"1234567890\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login",
+                                ""
+                            ]
+                        },
+                        "description": "Login by sending OTP to phone number. No password required."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Verify OTP",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"access_token\", jsonData.access);",
+                                    "    pm.environment.set(\"refresh_token\", jsonData.refresh);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"phone\": \"{{phone}}\",\n    \"otp\": \"{{otp}}\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/verify-otp/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "verify-otp",
+                                ""
+                            ]
+                        },
+                        "description": "Verify OTP and get JWT tokens. Use this after register or login."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "OTP-based authentication endpoints (No passwords)"
+        },
+        {
+            "name": "Hotels",
+            "item": [
+                {
+                    "name": "Hotel Detail",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"hotel_id\", jsonData.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/hotels/{{hotel_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "hotels",
+                                "{{hotel_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get detailed information about a specific hotel including images, amenities, pricing summary, and similar hotels. Required for the Hotel Detail Page UI."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Hotel Room Availability",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/hotels/{{hotel_id}}/rooms/?check_in=2026-02-01&check_out=2026-02-05&guests=2",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "hotels",
+                                "{{hotel_id}}",
+                                "rooms",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "check_in",
+                                    "value": "2026-02-01",
+                                    "description": "Check-in date (YYYY-MM-DD)"
+                                },
+                                {
+                                    "key": "check_out",
+                                    "value": "2026-02-05",
+                                    "description": "Check-out date (YYYY-MM-DD)"
+                                },
+                                {
+                                    "key": "guests",
+                                    "value": "2",
+                                    "description": "Number of guests"
+                                }
+                            ]
+                        },
+                        "description": "Check room availability and base pricing for a hotel based on specific dates and guest count."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Read-only hotel detail and availability endpoints"
+        },
+        {
+            "name": "Homestays",
+            "item": [
+                {
+                    "name": "Homestay Detail",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"homestay_id\", jsonData.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/homestays/{{homestay_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "homestays",
+                                "{{homestay_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get detailed information about a specific homestay or villa including images, amenities, pricing summary, and similar properties."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Homestay Room Availability",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/homestays/{{homestay_id}}/rooms/?check_in=2026-02-01&check_out=2026-02-05&guests=2",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "homestays",
+                                "{{homestay_id}}",
+                                "rooms",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "check_in",
+                                    "value": "2026-02-01",
+                                    "description": "Check-in date (YYYY-MM-DD)"
+                                },
+                                {
+                                    "key": "check_out",
+                                    "value": "2026-02-05",
+                                    "description": "Check-out date (YYYY-MM-DD)"
+                                },
+                                {
+                                    "key": "guests",
+                                    "value": "2",
+                                    "description": "Number of guests"
+                                }
+                            ]
+                        },
+                        "description": "Check room availability and calculate total stay costs for a homestay or villa based on dates and guests."
+                    },
+                    "response": [
+                        {
+                            "name": "Success Response",
+                            "originalRequest": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/homestays/{{homestay_id}}/rooms/?check_in=2026-02-01&check_out=2026-02-05&guests=2",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "homestays",
+                                        "{{homestay_id}}",
+                                        "rooms",
+                                        ""
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "check_in",
+                                            "value": "2026-02-01"
+                                        },
+                                        {
+                                            "key": "check_out",
+                                            "value": "2026-02-05"
+                                        },
+                                        {
+                                            "key": "guests",
+                                            "value": "2"
+                                        }
+                                    ]
+                                }
+                            },
+                            "status": "OK",
+                            "code": 200,
+                            "_postman_previewlanguage": "json",
+                            "header": [
+                                {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "cookie": [],
+                            "body": "[\n    {\n        \"id\": 101,\n        \"name\": \"Entire 3BHK Villa\",\n        \"max_guests\": 10,\n        \"base_price\": \"12000.00\",\n        \"total_nights\": 4,\n        \"base_total\": \"48000.00\",\n        \"discount\": \"0.00\",\n        \"gst\": \"5760.00\",\n        \"final_payable_amount\": \"53760.00\",\n        \"is_entire_place\": true\n    },\n    {\n        \"id\": 102,\n        \"name\": \"Standard Room\",\n        \"max_guests\": 2,\n        \"base_price\": \"2500.00\",\n        \"total_nights\": 4,\n        \"base_total\": \"10000.00\",\n        \"discount\": \"0.00\",\n        \"gst\": \"1200.00\",\n        \"final_payable_amount\": \"11200.00\",\n        \"is_entire_place\": false\n    }\n]"
+                        }
+                    ]
+                }
+            ],
+            "description": "Read-only homestay/villa detail and availability endpoints"
+        },
+        {
+            "name": "Holiday Packages",
+            "item": [
+                {
+                    "name": "Package Detail",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"package_id\", jsonData.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/holiday-packages/{{package_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "holiday-packages",
+                                "{{package_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get full details of a single holiday package by its ID including itinerary, accommodation, and inclusions. Optimized for the Detail Page UI."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Package Price Breakdown",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/holiday-packages/{{package_id}}/price/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "holiday-packages",
+                                "{{package_id}}",
+                                "price",
+                                ""
+                            ]
+                        },
+                        "description": "Get pricing breakdown for a holiday package including base price, discounts, and per-person rates."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for holiday packages management and detail viewing."
+        },
+        {
+            "name": "Houseboats",
+            "item": [
+                {
+                    "name": "Houseboat Detail",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"houseboat_id\", jsonData.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/houseboats/{{houseboat_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "houseboats",
+                                "{{houseboat_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get comprehensive details for a houseboat, including specifications, timings, meal plans, and similar houseboats."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for houseboat detail and management."
+        },
+        {
+            "name": "Cabs",
+            "item": [
+                {
+                    "name": "Cab Detail",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"cab_id\", jsonData.cab.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/cabs/{{cab_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "cabs",
+                                "{{cab_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get comprehensive details for a cab, including summary, pricing breakdown, and policies."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for cab detail and booking context."
+        },
+        {
+            "name": "Activities",
+            "item": [
+                {
+                    "name": "Activity Detail",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"activity_id\", jsonData.activity.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/activities/{{activity_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "activities",
+                                "{{activity_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get comprehensive details for an activity, experience, or trek including itinerary, pricing, and policies."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for activities, treks, and experiences."
+        },
+        {
+            "name": "Bookings",
+            "item": [
+                {
+                    "name": "My Bookings List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                ""
+                            ]
+                        },
+                        "description": "Get all bookings for the authenticated user."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Booking Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/{{booking_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                "{{booking_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Get details of a specific booking. Response includes type-specific fields (e.g., package_title, activity_title) and generic item_image."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Review Booking",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"booking_id\", jsonData.booking_id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"booking_type\": \"stay\",\n    \"property_id\": 21,\n    \"check_in\": \"2026-02-01\",\n    \"check_out\": \"2026-02-03\",\n    \"coupon_code\": \"SUMMER10\",\n    \"items\": [\n        {\n            \"room_type_id\": 101,\n            \"quantity\": 1,\n            \"adults\": 2,\n            \"children\": 0\n        }\n    ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/review/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                "review",
+                                ""
+                            ]
+                        },
+                        "description": "Review a booking before confirmation. This creates a draft booking and returns pricing details, taxes, and applied coupons.\n\nFields:\n- booking_type: stay | package | activity | cab | houseboat (required)\n- property_id: Property ID (required for stay)\n- check_in: Check-in date (required)\n- check_out: Check-out date (required)\n- coupon_code: Optional coupon code\n- items: Array of booking items (same structure as Create Booking)\n\nResponse:\n- booking_id: ID of the draft booking (use this for confirmation)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Booking Review",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/review/?booking_id={{booking_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                "review",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "booking_id",
+                                    "value": "{{booking_id}}",
+                                    "description": "ID of the draft booking to retrieve review details"
+                                }
+                            ]
+                        },
+                        "description": "Retrieve details of a draft booking using its ID. This is useful for re-fetching the review page."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Confirm Booking",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Mr\",\n    \"full_name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"9876543210\",\n    \"country_code\": \"+91\",\n    \"special_requests\": \"Early check-in\",\n    \"is_gst_required\": true,\n    \"gst_number\": \"29ABCDE1234F1Z5\",\n    \"company_name\": \"Tech Corp\",\n    \"company_address\": \"Bangalore\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/confirm/{{booking_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                "confirm",
+                                "{{booking_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Confirm a draft booking by providing traveller details.\n\nPath Params:\n- booking_id: ID of the draft booking returned from Review Booking API\n\nFields:\n- title: Mr | Ms | Mrs (required)\n- full_name: Name of primary guest (required)\n- email: Email address (required)\n- phone: Phone number (required)\n- country_code: Country code (e.g., +91)\n- special_requests: Optional text\n- is_gst_required: Boolean (true/false)\n- gst_number: Required if is_gst_required=true\n- company_name: Required if is_gst_required=true\n- company_address: Required if is_gst_required=true"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for booking management."
+        },
+        {
+            "name": "Coupons",
+            "item": [
+                {
+                    "name": "List Coupons",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{access_token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/coupons/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "coupons",
+                                ""
+                            ]
+                        },
+                        "description": "List all valid coupons."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for coupon management."
+        },
+        {
+            "name": "Support",
+            "item": [
+                {
+                    "name": "FAQ List by Location",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/support/faqs/?location=Wayanad",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "support",
+                                "faqs",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "location",
+                                    "value": "Wayanad",
+                                    "description": "Filter FAQs by city or area name"
+                                }
+                            ]
+                        },
+                        "description": "Fetch a list of location-based FAQs and travel guides (e.g., Famous places to visit in a city)."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for support, FAQs, and travel guides."
+        },
+        {
+            "name": "Dining",
+            "item": [
+                {
+                    "name": "List Food Destinations",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/dining/?location=Wayanad",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "dining",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "location",
+                                    "value": "Wayanad",
+                                    "description": "Filter by location"
+                                }
+                            ]
+                        },
+                        "description": "List all food destinations, filterable by location and sorted by rating (descending)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Food Destination Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/dining/toddy-shop/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "dining",
+                                "toddy-shop",
+                                ""
+                            ]
+                        },
+                        "description": "Get details of a specific food destination by slug."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for food destinations."
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://127.0.0.1:8000",
+            "type": "string"
+        },
+        {
+            "key": "homestay_id",
+            "value": "21",
+            "type": "string"
+        },
+        {
+            "key": "package_id",
+            "value": "12",
+            "type": "string"
+        },
+        {
+            "key": "package_slug",
+            "value": "kerala-honeymoon-special",
+            "type": "string"
+        },
+        {
+            "key": "houseboat_id",
+            "value": "7",
+            "type": "string"
+        },
+        {
+            "key": "cab_id",
+            "value": "12",
+            "type": "string"
+        },
+        {
+            "key": "activity_id",
+            "value": "21",
+            "type": "string"
+        }
+    ]
 }

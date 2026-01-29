@@ -99,6 +99,11 @@ class PropertyAdmin(admin.ModelAdmin):
         ("Financials", {
             "fields": ("gst_percent",)
         }),
+        ("Entire Place Booking Configuration", {
+            "fields": ("allow_entire_place_booking", "entire_place_price", "entire_place_max_guests"),
+            "classes": ("collapse",),
+            "description": "Enable this to allow users to book the entire property at a special price."
+        }),
     )
 
 

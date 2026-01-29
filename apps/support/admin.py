@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SupportRequest, SupportTimeline
+from .models import SupportRequest, SupportTimeline, FAQ, FAQItem
 
 
 class SupportTimelineInline(admin.TabularInline):
@@ -8,6 +8,12 @@ class SupportTimelineInline(admin.TabularInline):
     fields = ('message', 'created_at')
     readonly_fields = ('created_at', 'updated_at')
     ordering = ('-created_at',)
+
+
+class FAQItemInline(admin.StackedInline):
+    model = FAQItem
+    extra = 1
+    fields = ("title", "description", "order")
 
 
 @admin.register(SupportRequest)
@@ -31,3 +37,21 @@ class SupportTimelineAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
     readonly_fields = ('created_at', 'updated_at')
+
+
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ("id", "location", "question", "is_active")
+    list_filter = ("location", "is_active")
+    search_fields = ("location", "question")
+    inlines = [FAQItemInline]
+    ordering = ("location", "question")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(FAQItem)
+class FAQItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "faq", "title", "order")
+    list_filter = ("faq__location", "faq")
+    search_fields = ("title", "description")
+    ordering = ("faq", "order")

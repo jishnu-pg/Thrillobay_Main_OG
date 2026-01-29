@@ -6,84 +6,155 @@ from apps.packages.models import (
 )
 from apps.properties.models import Discount
 
-class DiscountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Discount
-        fields = ["id", "name", "discount_type", "value"]
-
 class PackageImageSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
         model = PackageImage
-        fields = ["id", "image", "is_primary", "order"]
+        fields = ["url", "is_primary"]
+
+    def get_url(self, obj):
+        if obj.image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
 
 class PackageFeatureSerializer(serializers.ModelSerializer):
-    feature_label = serializers.CharField(source="get_feature_type_display")
+    type = serializers.CharField(source="get_feature_type_display")
+    included = serializers.BooleanField(source="is_included")
 
     class Meta:
         model = PackageFeature
-        fields = ["id", "feature_type", "feature_label", "is_included"]
+        fields = ["type", "included"]
 
-class PackageItinerarySerializer(serializers.ModelSerializer):
-    stay_property_name = serializers.CharField(source="stay_property.name", read_only=True)
-    transport_label = serializers.CharField(source="get_transport_type_display", read_only=True)
 
-    class Meta:
-        model = PackageItinerary
-        fields = [
-            "id", "day_number", "title", "description", 
-            "from_location", "to_location", "transport_type", "transport_label",
-            "stay_property", "stay_property_name", "stay_nights"
-        ]
-
-class PackageAccommodationSerializer(serializers.ModelSerializer):
-    property_name = serializers.CharField(source="property.name", read_only=True)
-    room_type_name = serializers.CharField(source="room_type.name", read_only=True)
-
-    class Meta:
-        model = PackageAccommodation
-        fields = ["id", "property", "property_name", "room_type", "room_type_name", "nights", "meals_included"]
-
-class PackageActivitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PackageActivity
-        fields = ["id", "itinerary_day", "name", "description", "image"]
-
-class PackageTransferSerializer(serializers.ModelSerializer):
-    transport_label = serializers.CharField(source="get_transport_type_display", read_only=True)
+class ItineraryTransferSerializer(serializers.ModelSerializer):
+    cab_category = serializers.CharField(source="cab_category.name", read_only=True)
 
     class Meta:
         model = PackageTransfer
-        fields = ["id", "itinerary_day", "transport_type", "transport_label", "description"]
+        fields = ["cab_category"]
 
-class PackageInclusionSerializer(serializers.ModelSerializer):
+
+class ItineraryStaySerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    room_type = serializers.SerializerMethodField()
+
     class Meta:
-        model = PackageInclusion
-        fields = ["id", "text", "is_included"]
+        model = PackageItinerary
+        fields = ["type", "name", "room_type"]
+
+    def get_type(self, obj):
+        if obj.stay_property:
+            return "hotel"
+        if obj.stay_houseboat:
+            return "houseboat"
+        return None
+
+    def get_name(self, obj):
+        if obj.stay_property:
+            return obj.stay_property.name
+        if obj.stay_houseboat:
+            return obj.stay_houseboat.name
+        return None
+
+    def get_room_type(self, obj):
+        # Optimized to use already prefetched accommodations list
+        if obj.stay_property:
+            accommodations = list(obj.package.accommodations.all())
+            accommodation = next((acc for acc in accommodations if acc.property_id == obj.stay_property_id), None)
+            if accommodation and accommodation.room_type:
+                return accommodation.room_type.name
+        return ""
+
+
+class PackageItinerarySerializer(serializers.ModelSerializer):
+    day = serializers.IntegerField(source="day_number")
+    transfer = serializers.SerializerMethodField()
+    stay = ItineraryStaySerializer(source="*", read_only=True)
+    activities = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PackageItinerary
+        fields = ["day", "title", "description", "transfer", "stay", "activities"]
+
+    def get_transfer(self, obj):
+        transfer = obj.transfers.first()
+        if transfer:
+            return ItineraryTransferSerializer(transfer).data
+        return None
+
+    def get_activities(self, obj):
+        return [act.name for act in obj.activities.all()]
+
+
+class PackageAccommodationSerializer(serializers.ModelSerializer):
+    property_name = serializers.CharField(source="property.name", read_only=True)
+    room_type = serializers.CharField(source="room_type.name", read_only=True)
+
+    class Meta:
+        model = PackageAccommodation
+        fields = ["property_name", "room_type", "nights", "meals_included"]
+
+
+class SimilarPackageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    price_from = serializers.CharField(source="base_price")
+
+    class Meta:
+        model = HolidayPackage
+        fields = ["id", "title", "price_from", "image"]
+
+    def get_image(self, obj):
+        primary = obj.images.filter(is_primary=True).first() or obj.images.first()
+        if primary and primary.image:
+            request = self.context.get("request")
+            if request:
+                return request.build_absolute_uri(primary.image.url)
+            return primary.image.url
+        return None
+
 
 class HolidayPackageDetailSerializer(serializers.ModelSerializer):
-    images = PackageImageSerializer(many=True, read_only=True)
+    location = serializers.CharField(source="primary_location")
+    discount = serializers.SerializerMethodField()
+    price_per_person = serializers.DecimalField(source="base_price", max_digits=12, decimal_places=2)
+    discounted_price = serializers.SerializerMethodField()
+    
+    images = serializers.SerializerMethodField()
+    highlights = serializers.JSONField()
     features = PackageFeatureSerializer(many=True, read_only=True)
     itinerary = PackageItinerarySerializer(many=True, read_only=True)
     accommodations = PackageAccommodationSerializer(many=True, read_only=True)
-    activities = PackageActivitySerializer(many=True, read_only=True)
-    transfers = PackageTransferSerializer(many=True, read_only=True)
+    transfers = serializers.SerializerMethodField()
     inclusions = serializers.SerializerMethodField()
     exclusions = serializers.SerializerMethodField()
-    discount_details = DiscountSerializer(source="discount", read_only=True)
-    final_price = serializers.SerializerMethodField()
+    terms = serializers.CharField(source="terms_and_conditions")
+    similar_packages = serializers.SerializerMethodField()
 
     class Meta:
         model = HolidayPackage
         fields = [
-            "id", "title", "slug", "primary_location", "secondary_locations",
-            "duration_days", "duration_nights", "base_price", "discount_details",
-            "final_price", "rating", "review_count", "short_description",
-            "highlights", "terms_and_conditions", "images", "features",
-            "itinerary", "accommodations", "activities", "transfers",
-            "inclusions", "exclusions"
+            "id", "title", "duration_days", "duration_nights", "location",
+            "base_price", "discount", "price_per_person", "discounted_price",
+            "rating", "review_count", "images", "highlights", "features",
+            "itinerary", "accommodations", "transfers", "inclusions",
+            "exclusions", "terms", "similar_packages"
         ]
 
-    def get_final_price(self, obj):
+    def get_discount(self, obj):
+        if obj.discount and obj.discount.is_active:
+            return {
+                "type": obj.discount.discount_type,
+                "value": float(obj.discount.value)
+            }
+        return None
+
+    def get_discounted_price(self, obj):
         if not obj.discount or not obj.discount.is_active:
             return obj.base_price
         
@@ -94,10 +165,29 @@ class HolidayPackageDetailSerializer(serializers.ModelSerializer):
         else:
             return max(Decimal("0.00"), obj.base_price - discount.value)
 
+    def get_images(self, obj):
+        # Primary image first, ordered images after
+        images = obj.images.all().order_by("-is_primary", "order")
+        return PackageImageSerializer(images, many=True, context=self.context).data
+
+    def get_transfers(self, obj):
+        # Extract unique cab categories used across itinerary
+        unique_cabs = set()
+        for it in obj.itinerary.all():
+            for transfer in it.transfers.all():
+                if transfer.cab_category:
+                    unique_cabs.add(transfer.cab_category.name)
+        return [{"cab_category": cab} for cab in sorted(list(unique_cabs))]
+
     def get_inclusions(self, obj):
-        inclusions = obj.inclusions.filter(is_included=True)
-        return PackageInclusionSerializer(inclusions, many=True).data
+        return [inc.text for inc in obj.inclusions.all() if inc.is_included]
 
     def get_exclusions(self, obj):
-        exclusions = obj.inclusions.filter(is_included=False)
-        return PackageInclusionSerializer(exclusions, many=True).data
+        return [inc.text for inc in obj.inclusions.all() if not inc.is_included]
+
+    def get_similar_packages(self, obj):
+        similar = HolidayPackage.objects.filter(
+            primary_location=obj.primary_location,
+            is_active=True
+        ).exclude(id=obj.id).prefetch_related("images")[:4]
+        return SimilarPackageSerializer(similar, many=True, context=self.context).data

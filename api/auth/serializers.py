@@ -8,6 +8,8 @@ User = get_user_model()
 
 class RegisterSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=15)
+    email = serializers.EmailField(required=False)
+    full_name = serializers.CharField(required=False)
 
     def validate_phone(self, value):
         if User.objects.filter(phone=value).exists():
@@ -17,6 +19,16 @@ class RegisterSerializer(serializers.Serializer):
     def create(self, validated_data):
         otp = str(random.randint(100000, 999999))
         phone = validated_data["phone"]
+        email = validated_data.get("email", "")
+        full_name = validated_data.get("full_name", "")
+        
+        first_name = ""
+        last_name = ""
+        if full_name:
+            parts = full_name.strip().split(" ", 1)
+            first_name = parts[0]
+            if len(parts) > 1:
+                last_name = parts[1]
         
         # Generate a unique username from phone number
         username = f"user_{phone}"
@@ -26,6 +38,9 @@ class RegisterSerializer(serializers.Serializer):
         user = User.objects.create_user(
             username=username,
             phone=phone,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
             password=random_password,
         )
         # Set unusable password so it can't be used for login
