@@ -91,8 +91,8 @@ class HouseBoatDetailSerializer(serializers.ModelSerializer):
         return obj.calculate_pricing()
 
     def get_images(self, obj):
-        # Use prefetched and sorted images
-        images = obj.images.all()
+        # Use prefetched and sorted images, excluding primary
+        images = [img for img in obj.images.all() if not img.is_primary]
         return HouseBoatImageSerializer(images, many=True, context=self.context).data
 
     def get_inclusions(self, obj):

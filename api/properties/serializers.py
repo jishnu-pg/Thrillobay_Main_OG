@@ -115,8 +115,9 @@ class HotelDetailSerializer(serializers.ModelSerializer):
         }
 
     def get_images(self, obj):
-        # Use already prefetched and sorted images
-        return HotelImageSerializer(obj.images.all(), many=True, context=self.context).data
+        # Use already prefetched and sorted images, excluding primary
+        images = [img for img in obj.images.all() if not img.is_primary]
+        return HotelImageSerializer(images, many=True, context=self.context).data
 
     def get_policies(self, obj):
         return {
@@ -287,8 +288,9 @@ class HomestayDetailSerializer(serializers.ModelSerializer):
         }
 
     def get_images(self, obj):
-        # Use already prefetched and sorted images
-        return HomestayImageSerializer(obj.images.all(), many=True, context=self.context).data
+        # Use already prefetched and sorted images, excluding primary
+        images = [img for img in obj.images.all() if not img.is_primary]
+        return HomestayImageSerializer(images, many=True, context=self.context).data
 
     def get_policies(self, obj):
         return {

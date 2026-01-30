@@ -106,7 +106,7 @@ class ActivityDetailSerializer(serializers.ModelSerializer):
 
         return {
             "primary_image": get_abs_url(primary),
-            "images": [get_abs_url(img) for img in images]
+            "images": [get_abs_url(img) for img in images if not img.is_primary]
         }
 
     def get_highlights(self, obj):

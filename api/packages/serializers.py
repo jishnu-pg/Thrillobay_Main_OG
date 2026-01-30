@@ -209,8 +209,8 @@ class HolidayPackageDetailSerializer(serializers.ModelSerializer):
             return max(Decimal("0.00"), obj.base_price - discount.value)
 
     def get_images(self, obj):
-        # Primary image first, ordered images after
-        images = obj.images.all().order_by("-is_primary", "order")
+        # Primary image first, ordered images after (but exclude primary from this list as per request)
+        images = [img for img in obj.images.all() if not img.is_primary]
         return PackageImageSerializer(images, many=True, context=self.context).data
 
     def get_transfers(self, obj):
