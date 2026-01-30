@@ -25,3 +25,20 @@ def get_price_range(queryset, price_field):
         "min": float(aggregate['min_price'] or 0),
         "max": float(aggregate['max_price'] or 0)
     }
+
+# Helper utilities to ensure unique filter values in responses
+def unique_list(iterable):
+    items = list(iterable)
+    return list(dict.fromkeys(items))
+
+def unique_by_id(dict_iterable):
+    items = list(dict_iterable)
+    seen = set()
+    result = []
+    for item in items:
+        item_id = item.get("id")
+        if item_id is None or item_id not in seen:
+            if item_id is not None:
+                seen.add(item_id)
+            result.append(item)
+    return result

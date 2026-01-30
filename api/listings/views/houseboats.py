@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions
 from apps.houseboats.models import HouseBoat
 from ..serializers import HouseboatListingSerializer
-from ..filters import ListingPagination, get_price_range
+from ..filters import ListingPagination, get_price_range, unique_list
 
 class HouseboatListingAPIView(generics.ListAPIView):
     serializer_class = HouseboatListingSerializer
@@ -59,7 +59,7 @@ class HouseboatListingAPIView(generics.ListAPIView):
                 "filters": {
                     "price_range": price_range,
                     "available_filters": {
-                        "bedrooms": queryset.values_list("specification__bedrooms", flat=True).distinct().order_by("specification__bedrooms")
+                        "bedrooms": unique_list(queryset.values_list("specification__bedrooms", flat=True).distinct().order_by("specification__bedrooms"))
                     }
                 }
             })

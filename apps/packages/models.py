@@ -2,6 +2,19 @@ from django.db import models
 from apps.common.models import TimeStampedModel
 from apps.properties.models import Property, RoomType, Discount
 
+class PackageTheme(TimeStampedModel):
+    """
+    Themes for Holiday Packages (e.g., Honeymoon, Pilgrimage, Adventure).
+    """
+    name = models.CharField(max_length=100, unique=True, help_text="Name of the theme")
+
+    class Meta:
+        verbose_name = "Package Theme"
+        verbose_name_plural = "Package Themes"
+
+    def __str__(self):
+        return self.name
+
 class HolidayPackage(TimeStampedModel):
     """
     Main model for Holiday Packages storing core information.
@@ -10,6 +23,8 @@ class HolidayPackage(TimeStampedModel):
     slug = models.SlugField(max_length=255, unique=True, help_text="Unique slug for the package URL")
     primary_location = models.CharField(max_length=255, help_text="Primary location of the package")
     secondary_locations = models.JSONField(default=list, blank=True, null=True, help_text="List of secondary locations")
+    
+    themes = models.ManyToManyField(PackageTheme, blank=True, related_name="packages", help_text="Themes associated with the package")
     
     duration_days = models.PositiveSmallIntegerField(help_text="Duration of the package in days")
     duration_nights = models.PositiveSmallIntegerField(help_text="Duration of the package in nights")

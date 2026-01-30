@@ -17,6 +17,20 @@ class CabCategory(TimeStampedModel):
         return self.name
 
 
+class CabTransferType(TimeStampedModel):
+    """
+    Types of transfers/services (e.g., Airport Transfer, Outstation, Hourly).
+    """
+    name = models.CharField(max_length=100, unique=True, help_text="Name of the transfer type")
+
+    class Meta:
+        verbose_name = "Cab Transfer Type"
+        verbose_name_plural = "Cab Transfer Types"
+
+    def __str__(self):
+        return self.name
+
+
 class Cab(TimeStampedModel):
     """
     Core Cab model updated to match UI requirements.
@@ -37,6 +51,13 @@ class Cab(TimeStampedModel):
         help_text="Category of the cab"
     )
     
+    transfer_types = models.ManyToManyField(
+        CabTransferType, 
+        blank=True, 
+        related_name="cabs", 
+        help_text="Supported transfer types (e.g., Airport, Outstation)"
+    )
+
     title = models.CharField(
         max_length=255, 
         help_text="e.g. Sedan | Dzire, Etios or Similar"

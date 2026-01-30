@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     CabCategory, Cab, CabImage, CabInclusion, 
-    CabPolicy, CabPricingOption, CabBooking
+    CabPolicy, CabPricingOption, CabBooking, CabTransferType
 )
 
 
@@ -10,6 +10,12 @@ from .models import (
 class CabCategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "is_active", "created_at")
     list_filter = ("is_active",)
+    search_fields = ("name",)
+
+
+@admin.register(CabTransferType)
+class CabTransferTypeAdmin(admin.ModelAdmin):
+    list_display = ("name",)
     search_fields = ("name",)
 
 
@@ -53,8 +59,9 @@ class CabAdmin(admin.ModelAdmin):
         "base_price", 
         "is_active"
     )
-    list_filter = ("category", "fuel_type", "is_ac", "is_active")
+    list_filter = ("category", "fuel_type", "is_ac", "is_active", "transfer_types")
     search_fields = ("title", "category__name")
+    filter_horizontal = ("transfer_types",)
     inlines = [
         CabImageInline, 
         CabInclusionInline, 
@@ -64,7 +71,7 @@ class CabAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ("Basic Info", {
-            "fields": ("title", "category", "location", "capacity", "luggage_capacity", "is_active")
+            "fields": ("title", "category", "location", "transfer_types", "capacity", "luggage_capacity", "is_active")
         }),
         ("Technical Specs", {
             "fields": ("fuel_type", "is_ac")

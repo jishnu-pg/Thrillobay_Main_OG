@@ -5,7 +5,8 @@ from django.utils.html import format_html
 from django.db.models import Sum
 from .models import (
     HolidayPackage, PackageImage, PackageFeature, PackageItinerary,
-    PackageAccommodation, PackageActivity, PackageTransfer, PackageInclusion
+    PackageAccommodation, PackageActivity, PackageTransfer, PackageInclusion,
+    PackageTheme
 )
 
 # --- FORMS & VALIDATION ---
@@ -110,19 +111,25 @@ class PackageInclusionInline(admin.TabularInline):
 
 # --- MAIN ADMIN ---
 
+@admin.register(PackageTheme)
+class PackageThemeAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+
 @admin.register(HolidayPackage)
 class HolidayPackageAdmin(admin.ModelAdmin):
     # Display configuration
     list_display = ("title", "primary_location", "duration_days", "duration_nights", "base_price", "is_active")
-    list_filter = ("is_active", "primary_location")
+    list_filter = ("is_active", "primary_location", "themes")
     search_fields = ("title", "primary_location")
     prepopulated_fields = {"slug": ("title",)}
+    filter_horizontal = ("themes",)
     
     # 1️⃣ Page Structure with Fieldsets
     fieldsets = (
         ("Basic Information", {
             "fields": (
-                "title", "slug", "primary_location", "secondary_locations", 
+                "title", "slug", "primary_location", "secondary_locations", "themes", 
                 ("rating", "review_count"), "is_active"
             ),
             "description": "Core identity of the holiday package."

@@ -465,13 +465,43 @@
                                 {
                                     "key": "star_rating",
                                     "value": "5",
+                                    "description": "Filter by star rating (1-5). Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "star_rating",
+                                    "value": "4",
                                     "description": "Filter by star rating (1-5)",
                                     "disabled": true
                                 },
                                 {
+                                    "key": "locations",
+                                    "value": "Wayanad",
+                                    "description": "Filter by city. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "locations",
+                                    "value": "Kozhikode",
+                                    "description": "Filter by city",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "property_type",
+                                    "value": "resort",
+                                    "description": "hotel, resort. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
                                     "key": "user_rating",
-                                    "value": "4",
-                                    "description": "Minimum user review rating",
+                                    "value": "4.5",
+                                    "description": "Minimum user review rating (e.g. 3.0, 3.5, 4.0, 4.5)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "amenities",
+                                    "value": "1",
+                                    "description": "Filter by amenity ID. Add multiple keys for multi-select.",
                                     "disabled": true
                                 },
                                 {
@@ -532,9 +562,39 @@
                                     "disabled": true
                                 },
                                 {
+                                    "key": "locations",
+                                    "value": "Kalpetta",
+                                    "description": "Filter by city. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "star_rating",
+                                    "value": "5",
+                                    "description": "Filter by star rating (1-5). Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "property_type",
+                                    "value": "villa",
+                                    "description": "homestay, villa, apartment. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
                                     "key": "user_rating",
-                                    "value": "4",
-                                    "description": "Minimum user review rating",
+                                    "value": "4.5",
+                                    "description": "Minimum user review rating (e.g. 3.0, 3.5, 4.0, 4.5)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "bedrooms",
+                                    "value": "2",
+                                    "description": "Number of bedrooms required. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "amenities",
+                                    "value": "1",
+                                    "description": "Filter by amenity ID",
                                     "disabled": true
                                 },
                                 {
@@ -583,9 +643,27 @@
                                     "disabled": true
                                 },
                                 {
+                                    "key": "min_nights",
+                                    "value": "2",
+                                    "description": "Minimum duration in nights",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "max_nights",
+                                    "value": "8",
+                                    "description": "Maximum duration in nights",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "themes",
+                                    "value": "Honeymoon",
+                                    "description": "Filter by package theme. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
                                     "key": "duration_days",
                                     "value": "5",
-                                    "description": "Filter by exact duration in days",
+                                    "description": "Filter by exact duration in days (Legacy)",
                                     "disabled": true
                                 },
                                 {
@@ -686,6 +764,18 @@
                                     "key": "price_max",
                                     "value": "5000",
                                     "description": "Maximum price filter",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "activity_type",
+                                    "value": "Hiking",
+                                    "description": "Filter by activity type. Add multiple keys for multi-select.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "activity_type",
+                                    "value": "Sightseeing",
+                                    "description": "Filter by activity type",
                                     "disabled": true
                                 },
                                 {
@@ -1279,6 +1369,64 @@
         {
             "name": "Cabs",
             "item": [
+                {
+                    "name": "List Cabs",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/listings/cabs/?category=Sedan&category=Hatchback&fuel_type=diesel&cab_model=Toyota Innova&seating_capacity=4&seating_capacity=6&transfer_type=Airport Transfer",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "listings",
+                                "cabs",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "category",
+                                    "value": "Sedan",
+                                    "description": "Filter by Cab Category (Multi-select)"
+                                },
+                                {
+                                    "key": "category",
+                                    "value": "Hatchback",
+                                    "description": "Filter by Cab Category (Multi-select)"
+                                },
+                                {
+                                    "key": "fuel_type",
+                                    "value": "diesel",
+                                    "description": "Filter by Fuel Type (Multi-select: petrol, diesel, cng)"
+                                },
+                                {
+                                    "key": "cab_model",
+                                    "value": "Toyota Innova",
+                                    "description": "Filter by Cab Model/Title (Multi-select)"
+                                },
+                                {
+                                    "key": "seating_capacity",
+                                    "value": "4",
+                                    "description": "Filter by Seating Capacity (Multi-select)"
+                                },
+                                {
+                                    "key": "seating_capacity",
+                                    "value": "6",
+                                    "description": "Filter by Seating Capacity (Multi-select)"
+                                },
+                                {
+                                    "key": "transfer_type",
+                                    "value": "Airport Transfer",
+                                    "description": "Filter by Transfer Type (Multi-select)"
+                                }
+                            ]
+                        },
+                        "description": "List all cabs with advanced filters (Category, Fuel Type, Model, Capacity, Transfer Type) and faceted counts."
+                    },
+                    "response": []
+                },
                 {
                     "name": "Cab Detail",
                     "event": [

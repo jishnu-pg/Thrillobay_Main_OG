@@ -2,8 +2,13 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     Activity, ActivityImage, ActivityFeature, ActivityHighlight,
-    ActivityItinerary, ActivityPolicy, ActivityInclusion
+    ActivityItinerary, ActivityPolicy, ActivityInclusion, ActivityType
 )
+
+@admin.register(ActivityType)
+class ActivityTypeAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
 
 class ActivityImageInline(admin.TabularInline):
     model = ActivityImage
@@ -42,9 +47,10 @@ class ActivityPolicyInline(admin.StackedInline):
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
     list_display = ("title", "location", "duration_days", "difficulty", "base_price", "is_active", "created_at")
-    list_filter = ("is_active", "difficulty", "duration_days", "location")
+    list_filter = ("is_active", "difficulty", "duration_days", "location", "types")
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ("title", "location", "short_description")
+    filter_horizontal = ("types",)
     
     inlines = [
         ActivityImageInline,
@@ -60,7 +66,7 @@ class ActivityAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Basic Information", {
-            "fields": ("title", "slug", "location", "short_description", "description", "is_active")
+            "fields": ("title", "slug", "location", "types", "short_description", "description", "is_active")
         }),
         ("Experience Details", {
             "fields": (("duration_days", "duration_nights"), "difficulty", ("min_age", "max_age"), "group_size")

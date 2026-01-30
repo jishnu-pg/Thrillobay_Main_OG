@@ -2,6 +2,19 @@ from django.db import models
 from apps.common.models import TimeStampedModel
 from apps.properties.models import Discount
 
+class ActivityType(TimeStampedModel):
+    """
+    Types of Activities (e.g., Hiking, Sightseeing, Fishing).
+    """
+    name = models.CharField(max_length=100, unique=True, help_text="Name of the activity type")
+
+    class Meta:
+        verbose_name = "Activity Type"
+        verbose_name_plural = "Activity Types"
+
+    def __str__(self):
+        return self.name
+
 class Activity(TimeStampedModel):
     """
     Main model for Activities / experiences (treks, sightseeing, adventure).
@@ -14,6 +27,9 @@ class Activity(TimeStampedModel):
 
     title = models.CharField(max_length=255, help_text="The name of the activity")
     slug = models.SlugField(max_length=255, unique=True, help_text="Unique slug for the activity URL")
+    
+    types = models.ManyToManyField(ActivityType, blank=True, related_name="activities", help_text="Types of activity")
+    
     location = models.CharField(max_length=255, help_text="Location where the activity takes place")
     short_description = models.TextField(help_text="Brief summary of the activity")
     description = models.TextField(help_text="Detailed description of the activity")

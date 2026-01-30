@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
-from django.db.models import Q
+from django.db.models import Q, Min, Max, Count
 from apps.packages.models import HolidayPackage
 from ..serializers import PackageListingSerializer
-from ..filters import ListingPagination, get_price_range
+from ..filters import ListingPagination, get_price_range, unique_list
 
 class PackageListingAPIView(generics.ListAPIView):
     serializer_class = PackageListingSerializer
@@ -23,6 +23,20 @@ class PackageListingAPIView(generics.ListAPIView):
         price_max = self.request.query_params.get("price_max")
         if price_max:
             queryset = queryset.filter(base_price__lte=price_max)
+
+        # Duration Range (Nights)
+        min_nights = self.request.query_params.get("min_nights")
+        if min_nights:
+            queryset = queryset.filter(duration_nights__gte=min_nights)
+            
+        max_nights = self.request.query_params.get("max_nights")
+        if max_nights:
+            queryset = queryset.filter(duration_nights__lte=max_nights)
+
+        # Themes / Package Types
+        themes = self.request.query_params.getlist("themes") or self.request.query_params.getlist("themes[]")
+        if themes:
+            queryset = queryset.filter(themes__name__in=themes).distinct()
 
         duration = self.request.query_params.get("duration") or self.request.query_params.get("duration_days")
         if duration:
@@ -48,11 +62,23 @@ class PackageListingAPIView(generics.ListAPIView):
         else:
             queryset = queryset.order_by("-rating")
 
-        return queryset.prefetch_related("images", "discount")
+        return queryset.prefetch_related("images", "discount", "themes")
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        
+        # Metadata
         price_range = get_price_range(queryset, "base_price")
+        
+        # Duration Range (Nights)
+        min_duration = queryset.aggregate(min=Min("duration_nights"))["min"]
+        max_duration = queryset.aggregate(max=Max("duration_nights"))["max"]
+        duration_range = {"min": min_duration, "max": max_duration}
+        
+        # Faceted Counts for Themes
+        themes_data = queryset.values("themes__name").annotate(count=Count("id")).order_by("themes__name")
+        # Filter out None/Empty themes
+        themes_data = [t for t in themes_data if t["themes__name"]]
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -60,8 +86,10 @@ class PackageListingAPIView(generics.ListAPIView):
             return self.paginator.get_paginated_response(serializer.data, extra_data={
                 "filters": {
                     "price_range": price_range,
+                    "duration_range": duration_range,
                     "available_filters": {
-                        "durations": queryset.values_list("duration_days", flat=True).distinct().order_by("duration_days")
+                        "themes": themes_data,
+                        "durations": unique_list(queryset.values_list("duration_days", flat=True).distinct().order_by("duration_days"))
                     }
                 }
             })

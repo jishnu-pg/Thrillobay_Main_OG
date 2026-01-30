@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
-from django.db.models import Min, Q
+from django.db.models import Min, Q, Count
 from apps.properties.models import Property, Amenity
 from ..serializers import HotelListingSerializer
-from ..filters import ListingPagination, get_price_range
+from ..filters import ListingPagination, get_price_range, unique_by_id
 
 class HotelListingAPIView(generics.ListAPIView):
     serializer_class = HotelListingSerializer
@@ -20,6 +20,16 @@ class HotelListingAPIView(generics.ListAPIView):
         destination = self.request.query_params.get("destination")
         if destination:
             queryset = queryset.filter(Q(city__icontains=destination) | Q(state__icontains=destination))
+
+        # Locations filter (city)
+        locations = self.request.query_params.getlist("locations") or self.request.query_params.getlist("locations[]")
+        if locations:
+            queryset = queryset.filter(city__in=locations)
+
+        # Property Type filter
+        property_types = self.request.query_params.getlist("property_type") or self.request.query_params.getlist("property_type[]")
+        if property_types:
+            queryset = queryset.filter(property_type__in=property_types)
 
         guests = self.request.query_params.get("guests")
         adults = self.request.query_params.get("adults")
@@ -39,9 +49,10 @@ class HotelListingAPIView(generics.ListAPIView):
         if price_max:
             queryset = queryset.filter(min_price__lte=price_max)
 
-        star_rating = self.request.query_params.get("star_rating")
-        if star_rating:
-            queryset = queryset.filter(star_rating=star_rating)
+        # Star Rating filter (support multiple)
+        star_ratings = self.request.query_params.getlist("star_rating") or self.request.query_params.getlist("star_rating[]")
+        if star_ratings:
+            queryset = queryset.filter(star_rating__in=star_ratings)
 
         user_rating = self.request.query_params.get("user_rating")
         if user_rating:
@@ -68,8 +79,29 @@ class HotelListingAPIView(generics.ListAPIView):
         # Calculate filter metadata
         price_range = get_price_range(queryset, "room_types__base_price")
         
-        # Get distinct amenities for the filter sidebar
-        available_amenities = Amenity.objects.filter(properties__in=queryset).distinct().values("id", "name")
+        # Faceted counts for available filters
+        # Note: These counts reflect the current filtered state (drill-down)
+        
+        # Locations (Cities)
+        locations_data = queryset.values('city').annotate(count=Count('id')).order_by('city')
+        
+        # Star Ratings
+        star_ratings_data = queryset.values('star_rating').annotate(count=Count('id')).order_by('star_rating')
+        
+        # Property Types
+        property_types_data = queryset.values('property_type').annotate(count=Count('id')).order_by('property_type')
+        
+        # User Review Ratings (Cumulative counts)
+        review_rating_counts = [
+            {"rating": 4.5, "count": queryset.filter(review_rating__gte=4.5).count()},
+            {"rating": 4.0, "count": queryset.filter(review_rating__gte=4.0).count()},
+            {"rating": 3.5, "count": queryset.filter(review_rating__gte=3.5).count()},
+            {"rating": 3.0, "count": queryset.filter(review_rating__gte=3.0).count()},
+        ]
+
+        # Amenities
+        # For M2M, we need to filter the Amenity model to those used in the current queryset
+        available_amenities = Amenity.objects.filter(properties__in=queryset).values("id", "name").annotate(count=Count('properties')).order_by('-count')
 
         # Paginate
         page = self.paginate_queryset(queryset)
@@ -79,7 +111,11 @@ class HotelListingAPIView(generics.ListAPIView):
                 "filters": {
                     "price_range": price_range,
                     "available_filters": {
-                        "amenities": available_amenities,
+                        "locations": locations_data,
+                        "star_ratings": star_ratings_data,
+                        "property_types": property_types_data,
+                        "user_ratings": review_rating_counts,
+                        "amenities": unique_by_id(available_amenities),
                     }
                 }
             })
