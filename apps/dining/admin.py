@@ -7,6 +7,7 @@ class FoodDestinationImageInline(admin.TabularInline):
 
 @admin.register(FoodDestination)
 class FoodDestinationAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ("name", "location", "price_per_person", "rating", "is_active")
     list_filter = ("is_active", "location")
     search_fields = ("name", "location")

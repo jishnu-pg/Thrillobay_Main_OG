@@ -41,6 +41,7 @@ class SupportTimelineAdmin(admin.ModelAdmin):
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ("id", "location", "question", "is_active")
     list_filter = ("location", "is_active")
     search_fields = ("location", "question")

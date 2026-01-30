@@ -5,6 +5,7 @@ from .models import Property, RoomType, PropertyImage, RoomTypeImage, Discount, 
 
 @admin.register(FamousPlace)
 class FamousPlaceAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ("name", "city", "location", "is_active")
     list_filter = ("city", "is_active")
     search_fields = ("name", "city", "location")
