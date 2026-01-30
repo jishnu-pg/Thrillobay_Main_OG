@@ -52,7 +52,7 @@ class RoomTypeImageInline(admin.TabularInline):
 class RoomTypeInline(admin.TabularInline):
     model = RoomType
     extra = 0
-    fields = ("name", "max_guests", "base_price", "total_units", "has_breakfast")
+    fields = ("name", "description", "max_guests", "base_price", "total_units", "has_breakfast")
 
 
 @admin.register(Property)
@@ -126,7 +126,7 @@ class RoomTypeAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ("Basic Information", {
-            "fields": ("property", "name", "max_guests", "bedroom_count", "is_entire_place")
+            "fields": ("property", "name", "description", "max_guests", "bedroom_count", "is_entire_place")
         }),
         ("Pricing & Policies", {
             "fields": ("base_price", "has_breakfast", "refund_policy", "booking_policy")
