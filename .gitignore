@@ -13,3 +13,12 @@ staticfiles/
 *.log
 ngrok.log
 TestFrontEnd/
+
+# User added ignores
+room_types/
+check_output.txt
+.vscode/
+.idea/
+*.sqlite3
+*.bak
+*.postman_environment.json
