@@ -23,7 +23,7 @@ class CabListingAPIView(generics.ListAPIView):
         if fuel_type:
             queryset = queryset.filter(fuel_type=fuel_type)
 
-        capacity = self.request.query_params.get("seating_capacity")
+        capacity = self.request.query_params.get("seating_capacity") or self.request.query_params.get("capacity")
         if capacity:
             queryset = queryset.filter(capacity__gte=capacity)
 

@@ -24,9 +24,21 @@ class PackageListingAPIView(generics.ListAPIView):
         if price_max:
             queryset = queryset.filter(base_price__lte=price_max)
 
-        duration_days = self.request.query_params.get("duration_days")
-        if duration_days:
-            queryset = queryset.filter(duration_days=duration_days)
+        duration = self.request.query_params.get("duration") or self.request.query_params.get("duration_days")
+        if duration:
+            # Handle "1-2 Days" format or exact number
+            if "-" in str(duration):
+                try:
+                    min_d, max_d = map(int, str(duration).lower().replace("days", "").replace("day", "").split("-"))
+                    queryset = queryset.filter(duration_days__gte=min_d, duration_days__lte=max_d)
+                except ValueError:
+                    pass
+            else:
+                try:
+                    d = int(str(duration).lower().replace("days", "").replace("day", "").strip())
+                    queryset = queryset.filter(duration_days=d)
+                except ValueError:
+                    pass
 
         sort_by = self.request.query_params.get("sort_by", "rating")
         if sort_by == "price_asc":

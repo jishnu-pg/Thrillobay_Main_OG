@@ -66,12 +66,17 @@ class GlobalSearchAPIView(APIView):
     def search_hotels(self, request):
         destination = request.query_params.get("destination")
         guests = request.query_params.get("guests")
+        adults = request.query_params.get("adults")
+        children = request.query_params.get("children")
+        
+        # Calculate total guests if adults/children provided
+        if not guests and adults:
+            guests = int(adults) + int(children or 0)
         
         queryset = Property.objects.filter(property_type__in=["hotel", "resort"], is_active=True)
         if destination:
             queryset = queryset.filter(Q(city__icontains=destination) | Q(state__icontains=destination))
         if guests:
-            # Filter properties that have at least one room type accommodating the required guests
             queryset = queryset.filter(room_types__max_guests__gte=guests).distinct()
         
         queryset = queryset.prefetch_related("room_types", "images").order_by("-review_rating")
@@ -85,6 +90,11 @@ class GlobalSearchAPIView(APIView):
     def search_homestays(self, request):
         destination = request.query_params.get("destination")
         guests = request.query_params.get("guests")
+        adults = request.query_params.get("adults")
+        children = request.query_params.get("children")
+        
+        if not guests and adults:
+            guests = int(adults) + int(children or 0)
         
         queryset = Property.objects.filter(property_type__in=["homestay", "villa"], is_active=True)
         if destination:
@@ -104,7 +114,7 @@ class GlobalSearchAPIView(APIView):
         destination = request.query_params.get("destination")
         price_min = request.query_params.get("price_min")
         price_max = request.query_params.get("price_max")
-        duration = request.query_params.get("duration_days")
+        duration = request.query_params.get("duration") or request.query_params.get("duration_days")
         
         queryset = HolidayPackage.objects.filter(is_active=True)
         if destination:
@@ -114,7 +124,19 @@ class GlobalSearchAPIView(APIView):
         if price_max:
             queryset = queryset.filter(base_price__lte=price_max)
         if duration:
-            queryset = queryset.filter(duration_days=duration)
+            # Handle "1-2 Days" format or exact number
+            if "-" in str(duration):
+                try:
+                    min_d, max_d = map(int, str(duration).lower().replace("days", "").replace("day", "").split("-"))
+                    queryset = queryset.filter(duration_days__gte=min_d, duration_days__lte=max_d)
+                except ValueError:
+                    pass
+            else:
+                try:
+                    d = int(str(duration).lower().replace("days", "").replace("day", "").strip())
+                    queryset = queryset.filter(duration_days=d)
+                except ValueError:
+                    pass
             
         queryset = queryset.select_related("discount").prefetch_related("images").order_by("-rating")
         serializer = SearchPackageSerializer(queryset, many=True, context={"request": request})
@@ -128,6 +150,7 @@ class GlobalSearchAPIView(APIView):
         destination = request.query_params.get("destination")
         bedrooms = request.query_params.get("bedrooms")
         guests = request.query_params.get("guests")
+        houseboat_type = request.query_params.get("houseboat_type") # e.g. "Day Cruise"
         
         queryset = HouseBoat.objects.filter(is_active=True)
         if destination:
@@ -136,6 +159,12 @@ class GlobalSearchAPIView(APIView):
             queryset = queryset.filter(specification__bedrooms=bedrooms)
         if guests:
             queryset = queryset.filter(specification__max_guests__gte=guests)
+        if houseboat_type:
+            # Try matching cruise_type or ac_type choices or just fuzzy match
+            queryset = queryset.filter(
+                Q(specification__cruise_type__icontains=houseboat_type) | 
+                Q(specification__ac_type__icontains=houseboat_type)
+            )
             
         queryset = queryset.select_related("specification", "discount").prefetch_related("images").order_by("-rating")
         serializer = SearchHouseboatSerializer(queryset, many=True, context={"request": request})
@@ -149,14 +178,17 @@ class GlobalSearchAPIView(APIView):
         location = request.query_params.get("location") or request.query_params.get("destination")
         difficulty = request.query_params.get("difficulty")
         duration = request.query_params.get("duration") # days
+        activity_type = request.query_params.get("activity_type") # e.g. "Scuba Diving"
         
         queryset = Activity.objects.filter(is_active=True)
         if location:
             queryset = queryset.filter(location__icontains=location)
         if difficulty:
-            queryset = queryset.filter(difficulty=difficulty)
+            queryset = queryset.filter(difficulty__iexact=difficulty)
         if duration:
              queryset = queryset.filter(duration_days=duration)
+        if activity_type:
+            queryset = queryset.filter(title__icontains=activity_type)
             
         queryset = queryset.select_related("discount").prefetch_related("images").order_by("-rating")
         serializer = SearchActivitySerializer(queryset, many=True, context={"request": request})
@@ -167,9 +199,10 @@ class GlobalSearchAPIView(APIView):
         })
 
     def search_cabs(self, request):
-        pickup = request.query_params.get("pickup_location")
-        drop = request.query_params.get("drop_location")
+        pickup = request.query_params.get("pickup_location") or request.query_params.get("pickup_from")
+        drop = request.query_params.get("drop_location") or request.query_params.get("drop_off")
         capacity = request.query_params.get("capacity")
+        trip_type = request.query_params.get("trip_type") # Airport Transfer, Outstation, Hourly
         
         if pickup and drop and pickup.lower() == drop.lower():
             return Response(
@@ -180,6 +213,9 @@ class GlobalSearchAPIView(APIView):
         queryset = Cab.objects.filter(is_active=True)
         if capacity:
             queryset = queryset.filter(capacity__gte=capacity)
+            
+        # trip_type currently just passes through or could filter by capabilities if model supported it
+        # For now, we assume all cabs can do all trip types or it's handled at booking
             
         queryset = queryset.select_related("category").prefetch_related("images").order_by("base_price")
         serializer = SearchCabSerializer(queryset, many=True, context={"request": request})

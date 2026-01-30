@@ -162,6 +162,7 @@ class RoomType(TimeStampedModel):
     max_guests = models.PositiveIntegerField(help_text="Maximum number of guests")
     bedroom_count = models.PositiveIntegerField(blank=True, null=True, help_text="Number of bedrooms")
     has_breakfast = models.BooleanField(default=False, help_text="Breakfast included")
+    description = models.TextField(blank=True, null=True, help_text="Detailed description of the room type")
     
     refund_policy = models.TextField(help_text="Policy for refunds")
     booking_policy = models.TextField(help_text="Policy for booking")
