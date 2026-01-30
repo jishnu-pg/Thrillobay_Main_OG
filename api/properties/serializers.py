@@ -144,6 +144,7 @@ class RoomAvailabilitySerializer(serializers.ModelSerializer):
         model = RoomType
         fields = [
             "name",
+            "description",
             "base_price",
             "discounted_price",
             "gst_percent",
@@ -288,6 +289,7 @@ class HomestayRoomAvailabilitySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "description",
             "max_guests",
             "base_price",
             "total_nights",

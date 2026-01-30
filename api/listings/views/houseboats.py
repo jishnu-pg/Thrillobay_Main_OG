@@ -23,9 +23,20 @@ class HouseboatListingAPIView(generics.ListAPIView):
         if price_max:
             queryset = queryset.filter(base_price_per_night__lte=price_max)
 
-        bedroom_count = self.request.query_params.get("bedroom_count")
+        bedroom_count = self.request.query_params.get("bedroom_count") or self.request.query_params.get("bedrooms")
         if bedroom_count:
             queryset = queryset.filter(specification__bedrooms=bedroom_count)
+
+        guests = self.request.query_params.get("guests")
+        if guests:
+            queryset = queryset.filter(specification__max_guests__gte=guests)
+            
+        houseboat_type = self.request.query_params.get("houseboat_type")
+        if houseboat_type:
+            queryset = queryset.filter(
+                Q(specification__cruise_type__icontains=houseboat_type) | 
+                Q(specification__ac_type__icontains=houseboat_type)
+            )
 
         sort_by = self.request.query_params.get("sort_by", "rating")
         if sort_by == "price_asc":

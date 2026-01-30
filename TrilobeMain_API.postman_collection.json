@@ -29,11 +29,108 @@
                                 {
                                     "key": "type",
                                     "value": "hotel",
-                                    "description": "hotel, homestay, package, houseboat, activity, cab"
+                                    "description": "Required. Type: hotel, homestay, package, houseboat, activity, cab"
                                 },
                                 {
                                     "key": "destination",
-                                    "value": "Wayanad"
+                                    "value": "Wayanad",
+                                    "description": "City or State"
+                                },
+                                {
+                                    "key": "check_in",
+                                    "value": "2023-12-01",
+                                    "description": "YYYY-MM-DD (Hotel, Homestay, Houseboat)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "check_out",
+                                    "value": "2023-12-02",
+                                    "description": "YYYY-MM-DD (Hotel, Homestay, Houseboat)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "adults",
+                                    "value": "2",
+                                    "description": "Number of adults",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "children",
+                                    "value": "0",
+                                    "description": "Number of children",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "rooms",
+                                    "value": "1",
+                                    "description": "Number of rooms",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "start_date",
+                                    "value": "2023-12-01",
+                                    "description": "YYYY-MM-DD (Packages)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "end_date",
+                                    "value": "2023-12-05",
+                                    "description": "YYYY-MM-DD (Packages)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "duration",
+                                    "value": "1-2",
+                                    "description": "Duration in days or range (Packages, Activities)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "houseboat_type",
+                                    "value": "Day Cruise",
+                                    "description": "Filter by cruise type or AC type",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "date",
+                                    "value": "2023-12-01",
+                                    "description": "YYYY-MM-DD (Activities)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "activity_type",
+                                    "value": "Scuba Diving",
+                                    "description": "Search by activity title/type",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "trip_type",
+                                    "value": "Airport Transfer",
+                                    "description": "Airport Transfer, Outstation, Hourly (Cabs)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "pickup_from",
+                                    "value": "Kochi Airport",
+                                    "description": "Pickup location (Cabs)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "drop_off",
+                                    "value": "Munnar",
+                                    "description": "Drop location (Cabs)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "pickup_date",
+                                    "value": "2023-12-01",
+                                    "description": "YYYY-MM-DD (Cabs)",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "pickup_time",
+                                    "value": "10:00",
+                                    "description": "HH:MM (Cabs)",
+                                    "disabled": true
                                 }
                             ]
                         },
@@ -685,13 +782,28 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"phone\": \"1234567890\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
+                            "mode": "formdata",
+                            "options": {},
+                            "formdata": [
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. User's phone number. Must be unique."
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Optional. User's email address."
+                                },
+                                {
+                                    "key": "full_name",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Optional. User's full name."
                                 }
-                            }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/api/auth/register/",
@@ -736,13 +848,16 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"phone\": \"1234567890\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
+                            "mode": "formdata",
+                            "options": {},
+                            "formdata": [
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. Registered phone number."
                                 }
-                            }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/api/auth/login/",
@@ -787,13 +902,22 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"phone\": \"{{phone}}\",\n    \"otp\": \"{{otp}}\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
+                            "mode": "formdata",
+                            "options": {},
+                            "formdata": [
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. User's phone number."
+                                },
+                                {
+                                    "key": "otp",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. The 6-digit OTP received."
                                 }
-                            }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/api/auth/verify-otp/",
@@ -1289,13 +1413,86 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"booking_type\": \"stay\",\n    \"property_id\": 21,\n    \"check_in\": \"2026-02-01\",\n    \"check_out\": \"2026-02-03\",\n    \"coupon_code\": \"SUMMER10\",\n    \"items\": [\n        {\n            \"room_type_id\": 101,\n            \"quantity\": 1,\n            \"adults\": 2,\n            \"children\": 0\n        }\n    ]\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
+                            "mode": "formdata",
+                            "options": {},
+                            "formdata": [
+                                {
+                                    "key": "booking_type",
+                                    "value": "stay",
+                                    "type": "text",
+                                    "description": "Optional. Type of booking. Choices: stay, package, activity, cab, houseboat. Default: stay."
+                                },
+                                {
+                                    "key": "check_in",
+                                    "value": "2023-12-01",
+                                    "type": "text",
+                                    "description": "Required. Check-in date (YYYY-MM-DD)."
+                                },
+                                {
+                                    "key": "check_out",
+                                    "value": "2023-12-02",
+                                    "type": "text",
+                                    "description": "Required. Check-out date (YYYY-MM-DD)."
+                                },
+                                {
+                                    "key": "property_id",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required if booking_type is 'stay'."
+                                },
+                                {
+                                    "key": "items[0][room_type_id]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required for stay booking items."
+                                },
+                                {
+                                    "key": "items[0][quantity]",
+                                    "value": "1",
+                                    "type": "text",
+                                    "description": "Optional. Number of units. Default: 1."
+                                },
+                                {
+                                    "key": "items[0][adults]",
+                                    "value": "2",
+                                    "type": "text",
+                                    "description": "Required. Number of adults."
+                                },
+                                {
+                                    "key": "items[0][children]",
+                                    "value": "0",
+                                    "type": "text",
+                                    "description": "Optional. Number of children. Default: 0."
+                                },
+                                {
+                                    "key": "items[0][package_id]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required for package booking items.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "items[0][activity_id]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required for activity booking items.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "items[0][cab_id]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required for cab booking items.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "items[0][houseboat_id]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required for houseboat booking items.",
+                                    "disabled": true
                                 }
-                            }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/api/bookings/review/",
@@ -1361,13 +1558,80 @@
                             }
                         ],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"title\": \"Mr\",\n    \"full_name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"phone\": \"9876543210\",\n    \"country_code\": \"+91\",\n    \"special_requests\": \"Early check-in\",\n    \"is_gst_required\": true,\n    \"gst_number\": \"29ABCDE1234F1Z5\",\n    \"company_name\": \"Tech Corp\",\n    \"company_address\": \"Bangalore\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
+                            "mode": "formdata",
+                            "options": {},
+                            "formdata": [
+                                {
+                                    "key": "title",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Optional. Title (Mr, Mrs, Ms)."
+                                },
+                                {
+                                    "key": "full_name",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. Primary contact full name."
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. Primary contact email."
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Required. Primary contact phone."
+                                },
+                                {
+                                    "key": "country_code",
+                                    "value": "+91",
+                                    "type": "text",
+                                    "description": "Required. Country code."
+                                },
+                                {
+                                    "key": "special_requests",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Optional. Any special requests."
+                                },
+                                {
+                                    "key": "is_gst_required",
+                                    "value": "false",
+                                    "type": "text",
+                                    "description": "Optional. Boolean (true/false)."
+                                },
+                                {
+                                    "key": "gst_number",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required if is_gst_required is true.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "company_name",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required if is_gst_required is true.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "company_address",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Conditional. Required if is_gst_required is true.",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "travellers[0]",
+                                    "value": "",
+                                    "type": "text",
+                                    "description": "Optional. ID of a Traveller to link to this booking.",
+                                    "disabled": true
                                 }
-                            }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/api/bookings/confirm/{{booking_id}}/",

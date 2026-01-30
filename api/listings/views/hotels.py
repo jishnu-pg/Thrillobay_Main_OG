@@ -21,6 +21,16 @@ class HotelListingAPIView(generics.ListAPIView):
         if destination:
             queryset = queryset.filter(Q(city__icontains=destination) | Q(state__icontains=destination))
 
+        guests = self.request.query_params.get("guests")
+        adults = self.request.query_params.get("adults")
+        children = self.request.query_params.get("children")
+        
+        if not guests and adults:
+            guests = int(adults) + int(children or 0)
+            
+        if guests:
+            queryset = queryset.filter(room_types__max_guests__gte=guests).distinct()
+
         price_min = self.request.query_params.get("price_min")
         if price_min:
             queryset = queryset.filter(min_price__gte=price_min)

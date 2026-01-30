@@ -25,7 +25,15 @@ class ActivityListingAPIView(generics.ListAPIView):
 
         difficulty = self.request.query_params.get("difficulty")
         if difficulty:
-            queryset = queryset.filter(difficulty=difficulty)
+            queryset = queryset.filter(difficulty__iexact=difficulty)
+
+        duration = self.request.query_params.get("duration")
+        if duration:
+            queryset = queryset.filter(duration_days=duration)
+
+        activity_type = self.request.query_params.get("activity_type")
+        if activity_type:
+            queryset = queryset.filter(title__icontains=activity_type)
 
         sort_by = self.request.query_params.get("sort_by", "rating")
         if sort_by == "price_asc":
