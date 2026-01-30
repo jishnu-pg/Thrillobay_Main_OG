@@ -13,3 +13,8 @@ staticfiles/
 *.log
 ngrok.log
 TestFrontEnd/
+check_output.txt
+room_types/
+.vscode/
+.idea/
+*.sqlite3
