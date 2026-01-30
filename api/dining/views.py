@@ -10,8 +10,11 @@ class FoodDestinationListView(generics.ListAPIView):
     def get_queryset(self):
         queryset = FoodDestination.objects.filter(is_active=True)
         location = self.request.query_params.get("location")
-        if location:
+        
+        # Filter by location if provided and not "All"
+        if location and location.strip().lower() not in ["", "all", "null", "undefined"]:
             queryset = queryset.filter(location__icontains=location)
+            
         return queryset.order_by("-rating")
 
 class FoodDestinationDetailView(generics.RetrieveAPIView):

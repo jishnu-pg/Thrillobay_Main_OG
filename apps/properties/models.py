@@ -54,6 +54,8 @@ class Property(TimeStampedModel):
     city = models.CharField(max_length=100, help_text="City where the property is located")
     area = models.CharField(max_length=100, blank=True, null=True, help_text="Area or locality")
     state = models.CharField(max_length=100, help_text="State where the property is located")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, help_text="Latitude coordinate")
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, help_text="Longitude coordinate")
     
     # Rating and reviews
     star_rating = models.PositiveSmallIntegerField(blank=True, null=True, help_text="Star rating of the property")
@@ -247,3 +249,69 @@ class RoomTypeImage(TimeStampedModel):
 
     def __str__(self):
         return f"Image for {self.room_type.property.name} - {self.room_type.name}"
+
+
+class RoomOption(TimeStampedModel):
+    """
+    Different pricing options/packages for a RoomType (e.g., Breakfast Included, Full Board).
+    """
+    room_type = models.ForeignKey(
+        RoomType, on_delete=models.CASCADE, related_name="options", help_text="Related room type"
+    )
+    name = models.CharField(max_length=255, help_text="Option name (e.g. Breakfast Included)")
+    description = models.TextField(blank=True, null=True, help_text="Short description of this option")
+    
+    # Pricing overrides
+    base_price = models.DecimalField(max_digits=12, decimal_places=2, help_text="Price for this option")
+    
+    # Meal Plan
+    has_breakfast = models.BooleanField(default=False, help_text="Breakfast included")
+    has_lunch = models.BooleanField(default=False, help_text="Lunch included")
+    has_dinner = models.BooleanField(default=False, help_text="Dinner included")
+    
+    # Policies
+    is_refundable = models.BooleanField(default=False, help_text="Is this option refundable?")
+    cancellation_policy = models.TextField(blank=True, null=True, help_text="Specific cancellation policy")
+
+    def __str__(self):
+        return f"{self.name} - {self.room_type.name}"
+
+    @builtins.property
+    def discount_amount(self):
+        """Calculates discount amount based on property-level discount."""
+        discount_obj = self.room_type.property.discount
+        if not discount_obj or not discount_obj.is_active:
+            return Decimal("0.00")
+        
+        if discount_obj.discount_type == "percentage":
+            return (self.base_price * discount_obj.value / Decimal("100.00")).quantize(Decimal("0.01"))
+        return discount_obj.value
+
+    @builtins.property
+    def discounted_price(self):
+        """Base price minus any active property discount."""
+        return max(Decimal("0.00"), self.base_price - self.discount_amount)
+
+    @builtins.property
+    def gst_amount(self):
+        """Calculates GST based on discounted price."""
+        gst_factor = self.room_type.property.gst_percent / Decimal("100.00")
+        return (self.discounted_price * gst_factor).quantize(Decimal("0.01"))
+
+    @builtins.property
+    def total_payable_amount(self):
+        """Final amount including discount and GST."""
+        return self.discounted_price + self.gst_amount
+
+
+class FamousPlace(TimeStampedModel):
+    name = models.CharField(max_length=255, help_text="Name of the famous place")
+    description = models.TextField(help_text="Detailed description of the place")
+    city = models.CharField(max_length=100, db_index=True, help_text="City where the place is located")
+    location = models.CharField(max_length=255, help_text="Specific location/address")
+    entry_fee = models.CharField(max_length=255, blank=True, null=True, help_text="Entry fee information (e.g., 'INR 15 per person')")
+    timings = models.CharField(max_length=255, blank=True, null=True, help_text="Opening and closing timings")
+    is_active = models.BooleanField(default=True, help_text="Designates whether this place is active")
+
+    def __str__(self):
+        return f"{self.name} ({self.city})"

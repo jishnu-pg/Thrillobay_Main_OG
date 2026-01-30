@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.properties.models import Property, RoomType, PropertyImage, Amenity, Discount
+from apps.properties.models import Property, RoomType, PropertyImage, Amenity, Discount, RoomOption, FamousPlace
 from django.db.models import Min
 
 
@@ -73,6 +73,9 @@ class HotelDetailSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "location",
+            "city",
+            "latitude",
+            "longitude",
             "star_rating",
             "review_rating",
             "check_in_time",
@@ -133,12 +136,36 @@ class HotelDetailSerializer(serializers.ModelSerializer):
         return SimilarHotelSerializer(similar, many=True, context=self.context).data
 
 
+class RoomOptionSerializer(serializers.ModelSerializer):
+    discounted_price = serializers.ReadOnlyField()
+    gst_amount = serializers.ReadOnlyField()
+    total_price = serializers.ReadOnlyField(source="total_payable_amount")
+    
+    class Meta:
+        model = RoomOption
+        fields = [
+            "id",
+            "name",
+            "description",
+            "base_price",
+            "discounted_price",
+            "gst_amount",
+            "total_price",
+            "has_breakfast",
+            "has_lunch",
+            "has_dinner",
+            "is_refundable",
+            "cancellation_policy"
+        ]
+
+
 class RoomAvailabilitySerializer(serializers.ModelSerializer):
     discounted_price = serializers.ReadOnlyField()
     gst_percent = serializers.SerializerMethodField()
     gst_amount = serializers.ReadOnlyField()
     total_price = serializers.ReadOnlyField(source="total_payable_amount")
     amenities = serializers.SerializerMethodField()
+    options = RoomOptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = RoomType
@@ -154,6 +181,7 @@ class RoomAvailabilitySerializer(serializers.ModelSerializer):
             "max_guests",
             "total_units",
             "amenities",
+            "options",
         ]
 
     def get_gst_percent(self, obj):
@@ -219,6 +247,8 @@ class HomestayDetailSerializer(serializers.ModelSerializer):
             "name",
             "property_type",
             "location",
+            "latitude",
+            "longitude",
             "review_rating",
             "check_in_time",
             "check_out_time",
@@ -323,3 +353,17 @@ class HomestayRoomAvailabilitySerializer(serializers.ModelSerializer):
     def get_final_payable_amount(self, obj):
         nights = self.get_total_nights(obj)
         return f"{(obj.total_payable_amount * nights):.2f}"
+
+
+class FamousPlaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FamousPlace
+        fields = [
+            "id",
+            "name",
+            "description",
+            "city",
+            "location",
+            "entry_fee",
+            "timings",
+        ]

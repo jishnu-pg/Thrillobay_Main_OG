@@ -1,6 +1,13 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Property, RoomType, PropertyImage, RoomTypeImage, Discount, Amenity
+from .models import Property, RoomType, PropertyImage, RoomTypeImage, Discount, Amenity, RoomOption, FamousPlace
+
+
+@admin.register(FamousPlace)
+class FamousPlaceAdmin(admin.ModelAdmin):
+    list_display = ("name", "city", "location", "is_active")
+    list_filter = ("city", "is_active")
+    search_fields = ("name", "city", "location")
 
 
 @admin.register(Discount)
@@ -85,7 +92,7 @@ class PropertyAdmin(admin.ModelAdmin):
             "fields": ("name", "property_type", "description", "is_active")
         }),
         ("Location", {
-            "fields": ("city", "area", "state")
+            "fields": ("city", "area", "state", "latitude", "longitude")
         }),
         ("Ratings & Reviews", {
             "fields": ("star_rating", "review_rating", "review_count")
@@ -107,6 +114,12 @@ class PropertyAdmin(admin.ModelAdmin):
     )
 
 
+class RoomOptionInline(admin.TabularInline):
+    model = RoomOption
+    extra = 1
+    fields = ("name", "base_price", "has_breakfast", "has_lunch", "has_dinner", "is_refundable")
+
+
 @admin.register(RoomType)
 class RoomTypeAdmin(admin.ModelAdmin):
     list_display = (
@@ -120,7 +133,7 @@ class RoomTypeAdmin(admin.ModelAdmin):
     list_filter = ("has_breakfast", "max_guests", "property__property_type")
     search_fields = ("name", "property__name")
     raw_id_fields = ("property",)
-    inlines = [RoomTypeImageInline]
+    inlines = [RoomOptionInline, RoomTypeImageInline]
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
 

@@ -748,6 +748,34 @@
                         "description": "Get paginated list of cabs."
                     },
                     "response": []
+                },
+                {
+                    "name": "Famous Places Listing",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/properties/famous-places/?city=Kochi",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "properties",
+                                "famous-places",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "city",
+                                    "value": "Kochi",
+                                    "description": "Filter by city name"
+                                }
+                            ]
+                        },
+                        "description": "Get a list of famous places in a specific city."
+                    },
+                    "response": []
                 }
             ],
             "description": "Endpoints for search result listing pages across all verticals."

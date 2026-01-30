@@ -5,12 +5,13 @@ from rest_framework.permissions import AllowAny
 from django.utils.dateparse import parse_date
 
 from django.db.models import Min, Prefetch, Q
-from apps.properties.models import Property, RoomType, PropertyImage
+from apps.properties.models import Property, RoomType, PropertyImage, FamousPlace
 from .serializers import (
     HotelDetailSerializer,
     RoomAvailabilitySerializer,
     HomestayDetailSerializer,
     HomestayRoomAvailabilitySerializer,
+    FamousPlaceSerializer,
 )
 
 
@@ -113,6 +114,21 @@ class HotelRoomAvailabilityAPIView(ListAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class FamousPlaceListAPIView(ListAPIView):
+    """
+    Returns a list of famous places in a specific city.
+    """
+    serializer_class = FamousPlaceSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = FamousPlace.objects.filter(is_active=True)
+        city = self.request.query_params.get("city")
+        if city:
+            queryset = queryset.filter(city__iexact=city)
+        return queryset
 class HomestayDetailAPIView(RetrieveAPIView):
     """
     Returns full details for a homestay/villa including images, amenities, pricing summary, and similar properties.
