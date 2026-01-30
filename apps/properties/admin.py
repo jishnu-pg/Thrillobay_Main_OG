@@ -64,6 +64,7 @@ class RoomTypeInline(admin.TabularInline):
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = (
         "name",
         "city",

@@ -49,6 +49,7 @@ class HouseBoatInclusionInline(admin.TabularInline):
 
 @admin.register(HouseBoat)
 class HouseBoatAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ("name", "location", "base_price_per_night", "rating", "is_active", "created_at")
     list_filter = ("is_active", "location", "rating")
     prepopulated_fields = {"slug": ("name",)}

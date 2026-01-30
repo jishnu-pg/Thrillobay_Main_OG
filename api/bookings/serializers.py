@@ -1,16 +1,18 @@
 from rest_framework import serializers
 from django.db import transaction
 from django.db.models import Q
+from decimal import Decimal
 from apps.bookings.models import Booking, BookingItem, BookingTraveller
 from apps.travellers.models import Traveller
-from apps.properties.models import Property, RoomType
+from apps.properties.models import Property, RoomType, RoomOption
 from apps.packages.models import HolidayPackage
 from apps.activities.models import Activity
-from apps.cabs.models import Cab
+from apps.cabs.models import Cab, CabPricingOption
 from apps.houseboats.models import HouseBoat
 
 class BookingItemInputSerializer(serializers.Serializer):
     room_type_id = serializers.IntegerField(required=False)
+    room_option_id = serializers.IntegerField(required=False)
     package_id = serializers.IntegerField(required=False)
     activity_id = serializers.IntegerField(required=False)
     cab_id = serializers.IntegerField(required=False)
@@ -19,6 +21,15 @@ class BookingItemInputSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(min_value=1, default=1)
     adults = serializers.IntegerField(min_value=1)
     children = serializers.IntegerField(min_value=0, default=0)
+    
+    # Houseboat specific
+    is_full_time_ac_opted = serializers.BooleanField(required=False, default=False)
+
+    # Cab specific
+    pickup_location = serializers.CharField(required=False, allow_blank=True)
+    drop_location = serializers.CharField(required=False, allow_blank=True)
+    pickup_datetime = serializers.DateTimeField(required=False)
+    trip_type = serializers.CharField(required=False, allow_blank=True)
 
 class BookingCreateSerializer(serializers.ModelSerializer):
     booking_type = serializers.ChoiceField(choices=Booking.BOOKING_TYPE, default="stay")
@@ -39,7 +50,9 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             "property_id",
             "items",
             "check_in",
-            "check_out"
+            "check_out",
+            "is_insurance_opted",
+            "payment_option"
         ]
         read_only_fields = ["id", "total_amount", "amount_paid", "status", "created_at"]
 
@@ -89,6 +102,17 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                 
                 item["room_type_obj"] = room_type
 
+                # Validate Room Option if provided
+                room_option_id = item.get("room_option_id")
+                room_option = None
+                if room_option_id:
+                    try:
+                        room_option = RoomOption.objects.get(id=room_option_id, room_type=room_type)
+                    except RoomOption.DoesNotExist:
+                        raise serializers.ValidationError(f"RoomOption {room_option_id} does not belong to RoomType {room_type_id}.")
+                
+                item["room_option_obj"] = room_option
+
                 # Validate Guest Capacity
                 adults = item["adults"]
                 children = item["children"]
@@ -113,7 +137,11 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                         raise serializers.ValidationError(f"Property '{property_obj.name}' is already booked for these dates.")
                 
                 # Pricing: Room Rate * Nights * Quantity
-                price_per_night = room_type.total_payable_amount
+                if room_option:
+                     price_per_night = room_option.discounted_price + room_option.gst_amount
+                else:
+                     price_per_night = room_type.total_payable_amount
+                
                 item_total = price_per_night * nights * quantity
                 total_price += item_total
 
@@ -171,11 +199,18 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                 # Convert float price to Decimal
                 price_decimal = serializers.DecimalField(max_digits=12, decimal_places=2).to_internal_value(str(price_per_person))
                 
-                item_total = price_decimal * total_pax
+                # Calculate total with 18% GST
+                subtotal = price_decimal * total_pax
+                tax_amount = (subtotal * Decimal("0.18")).quantize(Decimal("0.01"))
+                item_total = subtotal + tax_amount
+                
                 total_price += item_total
 
         # CAB BOOKING VALIDATION
         elif booking_type == "cab":
+            payment_option = attrs.get("payment_option", "full")
+            calculated_part_payment = Decimal(0)
+
             for item in items_data:
                 cab_id = item.get("cab_id")
                 if not cab_id:
@@ -189,10 +224,33 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                 item["cab_obj"] = cab
                 quantity = item["quantity"]
                 
-                # Pricing: Base Price * Quantity * Days (Nights)
-                price_per_day = cab.base_price
-                item_total = price_per_day * quantity * nights
+                # Pricing Logic
+                full_price = cab.base_price
+                
+                # Handle Payment Option
+                if payment_option == "part":
+                    pricing_opts = CabPricingOption.objects.filter(cab=cab)
+                    part_pay_opt = pricing_opts.filter(option_type="pay_now").first()
+                    
+                    if part_pay_opt:
+                         item_part_payment = part_pay_opt.amount
+                    else:
+                         # Default 10%
+                         item_part_payment = (full_price * Decimal("0.10")).quantize(Decimal("1.00"))
+                    
+                    calculated_part_payment += item_part_payment * quantity
+
+                item_price = full_price * quantity
+                
+                # Apply 18% GST for cabs
+                gst_rate = Decimal("0.18")
+                item_tax = item_price * gst_rate
+                item_total = item_price + item_tax
+                
                 total_price += item_total
+            
+            if payment_option == "part":
+                attrs["part_payment_amount"] = calculated_part_payment
         
         # HOUSEBOAT BOOKING VALIDATION
         elif booking_type == "houseboat":
@@ -209,14 +267,56 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                 item["houseboat_obj"] = houseboat
                 quantity = item["quantity"]
                 
-                # Pricing: (Discounted Price) * Quantity * Nights
+                # Pricing: (Discounted Price) * Quantity * Nights + 18% GST
                 pricing = houseboat.calculate_pricing()
                 price = pricing["discounted_price"]
+                
+                # Check for Extra Guests
+                extra_guest_total = Decimal(0)
+                # Assume standard capacity is bedrooms * 2 (common for houseboats)
+                standard_capacity = 0
+                if hasattr(houseboat, 'specification'):
+                    standard_capacity = houseboat.specification.bedrooms * 2
+                else:
+                    standard_capacity = 2 # Fallback
+                
+                total_pax = item["adults"] + item["children"]
+                if total_pax > standard_capacity:
+                    # Calculate extra pax
+                    # Priority: Adults fill standard capacity first
+                    adults = item["adults"]
+                    children = item["children"]
+                    
+                    remaining_capacity = standard_capacity
+                    
+                    # Fill with adults
+                    adults_in_base = min(adults, remaining_capacity)
+                    remaining_capacity -= adults_in_base
+                    extra_adults = adults - adults_in_base
+                    
+                    # Fill with children
+                    children_in_base = min(children, remaining_capacity)
+                    extra_children = children - children_in_base
+                    
+                    extra_guest_total += (Decimal(extra_adults) * houseboat.extra_guest_price_adult)
+                    extra_guest_total += (Decimal(extra_children) * houseboat.extra_guest_price_child)
+                
+                # Check for Full Time AC
+                ac_total = Decimal(0)
+                is_ac_opted = item.get("is_full_time_ac_opted", False)
+                if is_ac_opted:
+                     ac_total = houseboat.full_time_ac_price
                 
                 # Convert float price to Decimal
                 price_decimal = serializers.DecimalField(max_digits=12, decimal_places=2).to_internal_value(str(price))
                 
-                item_total = price_decimal * quantity * nights
+                # Total Per Night = Base Price + Extra Guests + AC
+                nightly_total = price_decimal + extra_guest_total + ac_total
+                
+                subtotal = nightly_total * quantity * nights
+                tax_amount = (subtotal * Decimal("0.18")).quantize(Decimal("0.01"))
+                item_total = subtotal + tax_amount
+                
                 total_price += item_total
 
         attrs["total_price"] = total_price
@@ -239,6 +339,15 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         validated_data.pop("houseboat_obj", None)
         
         total_amount = validated_data.pop("total_price", 0)
+        part_payment_amount = validated_data.pop("part_payment_amount", 0)
+        
+        # Calculate amount_paid based on payment_option
+        amount_paid = 0
+        payment_option = validated_data.get("payment_option", "full")
+        if payment_option == "part":
+            amount_paid = part_payment_amount
+        else:
+            amount_paid = total_amount
 
         with transaction.atomic():
             status = validated_data.pop("status", "pending")
@@ -246,7 +355,8 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             booking = Booking.objects.create(
                 user=self.context["request"].user,
                 total_amount=total_amount,
-                amount_paid=0, # Initial booking is unpaid
+                amount_paid=amount_paid,
+                part_payment_amount=part_payment_amount,
                 status=status,
                 **validated_data
             )
@@ -262,10 +372,12 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                 
                 if booking_type == "stay":
                     room_type = item["room_type_obj"]
+                    room_option = item.get("room_option_obj")
                     for _ in range(item["quantity"]):
                         BookingItem.objects.create(
                             property=property_obj,
                             room_type=room_type,
+                            room_option=room_option,
                             **common_data
                         )
                 
@@ -290,6 +402,10 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                     for _ in range(item["quantity"]):
                         BookingItem.objects.create(
                             cab=cab,
+                            pickup_location=item.get("pickup_location", ""),
+                            drop_location=item.get("drop_location", ""),
+                            pickup_datetime=item.get("pickup_datetime"),
+                            trip_type=item.get("trip_type", ""),
                             **common_data
                         )
 
@@ -298,6 +414,8 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                     for _ in range(item["quantity"]):
                         BookingItem.objects.create(
                             houseboat=houseboat,
+                            is_full_time_ac_opted=item.get("is_full_time_ac_opted", False),
+                            full_time_ac_amount=houseboat.full_time_ac_price if item.get("is_full_time_ac_opted", False) else 0,
                             **common_data
                         )
         
@@ -324,6 +442,8 @@ class BookingItemSerializer(serializers.ModelSerializer):
     # Houseboat fields
     houseboat_name = serializers.CharField(source="houseboat.name", read_only=True)
     houseboat_location = serializers.CharField(source="houseboat.location", read_only=True)
+    is_full_time_ac_opted = serializers.BooleanField(read_only=True)
+    full_time_ac_amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     
     # Generic Image
     item_image = serializers.SerializerMethodField()
@@ -333,6 +453,7 @@ class BookingItemSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField()
     category_display = serializers.SerializerMethodField()
     amenities = serializers.SerializerMethodField()
+    inclusions = serializers.SerializerMethodField()
 
     class Meta:
         model = BookingItem
@@ -346,13 +467,50 @@ class BookingItemSerializer(serializers.ModelSerializer):
             "activity_title", "activity_location",
             # Cab
             "cab_title", "cab_category",
+            "pickup_location", "drop_location", "pickup_datetime", "trip_type",
             # Houseboat
-            "houseboat_name", "houseboat_location",
+            "houseboat_name", "houseboat_location", "is_full_time_ac_opted", "full_time_ac_amount",
             
             "check_in", "check_out", "adults", "children",
             "item_image", "property_image",
-            "rating", "category_display", "amenities"
+            "rating", "category_display", "amenities", "inclusions"
         ]
+
+    def get_inclusions(self, obj):
+        inclusions = []
+        if obj.package:
+            # Map feature types to icon names if needed, for now return raw type
+            inclusions.extend([
+                {
+                    "name": f.get_feature_type_display(),
+                    "type": f.feature_type,
+                    "is_included": f.is_included
+                }
+                for f in obj.package.features.all()
+            ])
+        
+        if obj.cab:
+            inclusions.extend([
+                {
+                    "name": i.label,
+                    "value": i.value,
+                    "is_included": i.is_included
+                }
+                for i in obj.cab.inclusions.all()
+            ])
+        
+        if obj.houseboat and hasattr(obj.houseboat, 'meal_plan'):
+            mp = obj.houseboat.meal_plan
+            if mp.breakfast_included:
+                inclusions.append({"name": "Breakfast", "type": "meal", "is_included": True})
+            if mp.lunch_included:
+                inclusions.append({"name": "Lunch", "type": "meal", "is_included": True})
+            if mp.dinner_included:
+                inclusions.append({"name": "Dinner", "type": "meal", "is_included": True})
+            if mp.welcome_drink:
+                inclusions.append({"name": "Welcome Drink", "type": "drink", "is_included": True})
+                
+        return inclusions
 
     def get_amenities(self, obj):
         if obj.property:

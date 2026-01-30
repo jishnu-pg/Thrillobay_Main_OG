@@ -50,6 +50,7 @@ class CabPricingOptionInline(admin.TabularInline):
 
 @admin.register(Cab)
 class CabAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = (
         "title", 
         "category", 

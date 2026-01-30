@@ -118,6 +118,7 @@ class PackageThemeAdmin(admin.ModelAdmin):
 
 @admin.register(HolidayPackage)
 class HolidayPackageAdmin(admin.ModelAdmin):
+    save_as = True
     # Display configuration
     list_display = ("title", "primary_location", "duration_days", "duration_nights", "base_price", "is_active")
     list_filter = ("is_active", "primary_location", "themes")

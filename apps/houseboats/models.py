@@ -12,6 +12,10 @@ class HouseBoat(TimeStampedModel):
     description = models.TextField(help_text="Detailed description of the houseboat")
     
     base_price_per_night = models.DecimalField(max_digits=12, decimal_places=2, help_text="Base price per night")
+    extra_guest_price_adult = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Price per extra adult")
+    extra_guest_price_child = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Price per extra child")
+    full_time_ac_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Price for full time AC upgrade per night")
+    
     discount = models.ForeignKey(
         Discount, on_delete=models.SET_NULL, null=True, blank=True, related_name="houseboats", help_text="Applicable discount for the houseboat"
     )

@@ -46,6 +46,7 @@ class ActivityPolicyInline(admin.StackedInline):
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ("title", "location", "duration_days", "difficulty", "base_price", "is_active", "created_at")
     list_filter = ("is_active", "difficulty", "duration_days", "location", "types")
     prepopulated_fields = {"slug": ("title",)}

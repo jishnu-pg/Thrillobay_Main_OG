@@ -20,6 +20,7 @@ class HolidayPackage(TimeStampedModel):
     Main model for Holiday Packages storing core information.
     """
     title = models.CharField(max_length=255, help_text="Title of the holiday package")
+    subtitle = models.CharField(max_length=255, blank=True, null=True, help_text="Subtitle or promotional tag (e.g. Free Ticket)")
     slug = models.SlugField(max_length=255, unique=True, help_text="Unique slug for the package URL")
     primary_location = models.CharField(max_length=255, help_text="Primary location of the package")
     secondary_locations = models.JSONField(default=list, blank=True, null=True, help_text="List of secondary locations")

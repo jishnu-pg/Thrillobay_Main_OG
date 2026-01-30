@@ -63,6 +63,18 @@ class Booking(TimeStampedModel):
     company_name = models.CharField(max_length=255, blank=True, help_text="Company name for GST invoice")
     company_address = models.TextField(blank=True, help_text="Company address for GST invoice")
 
+    # Insurance
+    is_insurance_opted = models.BooleanField(default=False, help_text="Designates whether travel insurance is opted")
+    insurance_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Amount for travel insurance")
+
+    # Payment Options
+    PAYMENT_OPTION_CHOICES = [
+        ("full", "Full Payment"),
+        ("part", "Part Payment"),
+    ]
+    payment_option = models.CharField(max_length=10, choices=PAYMENT_OPTION_CHOICES, default="full", help_text="Selected payment option")
+    part_payment_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Amount to be paid now if part payment is selected")
+
     def __str__(self):
         return f"Booking #{self.id} - {self.user.username} ({self.booking_type}) - {self.status}"
 
@@ -71,6 +83,7 @@ class BookingItem(TimeStampedModel):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name="items", help_text="Related booking")
     property = models.ForeignKey("properties.Property", null=True, blank=True, on_delete=models.SET_NULL, help_text="Related property")
     room_type = models.ForeignKey("properties.RoomType", null=True, blank=True, on_delete=models.SET_NULL, help_text="Related room type")
+    room_option = models.ForeignKey("properties.RoomOption", null=True, blank=True, on_delete=models.SET_NULL, help_text="Selected room option (pricing plan)")
     package = models.ForeignKey("packages.HolidayPackage", null=True, blank=True, on_delete=models.SET_NULL, help_text="Related holiday package")
     activity = models.ForeignKey("activities.Activity", null=True, blank=True, on_delete=models.SET_NULL, help_text="Related activity")
     cab = models.ForeignKey("cabs.Cab", null=True, blank=True, on_delete=models.SET_NULL, help_text="Related cab")
@@ -89,6 +102,16 @@ class BookingItem(TimeStampedModel):
     check_out = models.DateField(null=True, blank=True, help_text="Check-out date")
     adults = models.PositiveIntegerField(default=1, help_text="Number of adults")
     children = models.PositiveIntegerField(default=0, help_text="Number of children")
+    
+    # Houseboat specifics
+    is_full_time_ac_opted = models.BooleanField(default=False, help_text="Designates whether full time AC is opted")
+    full_time_ac_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Amount for full time AC")
+
+    # Cab specifics
+    pickup_location = models.CharField(max_length=255, blank=True, help_text="Pickup location for cabs")
+    drop_location = models.CharField(max_length=255, blank=True, help_text="Drop location for cabs")
+    pickup_datetime = models.DateTimeField(null=True, blank=True, help_text="Pickup date and time for cabs")
+    trip_type = models.CharField(max_length=50, blank=True, help_text="Type of trip (e.g. Airport Transfer)")
 
     def __str__(self):
         item_name = ""

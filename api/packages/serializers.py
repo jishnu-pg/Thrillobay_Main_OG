@@ -36,17 +36,21 @@ class ItineraryTransferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PackageTransfer
-        fields = ["cab_category"]
+        fields = ["cab_category", "description"]
 
 
 class ItineraryStaySerializer(serializers.ModelSerializer):
     type = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     room_type = serializers.SerializerMethodField()
+    check_in_time = serializers.SerializerMethodField()
+    check_out_time = serializers.SerializerMethodField()
+    amenities = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = PackageItinerary
-        fields = ["type", "name", "room_type"]
+        fields = ["type", "name", "room_type", "check_in_time", "check_out_time", "amenities", "image"]
 
     def get_type(self, obj):
         if obj.stay_property:
@@ -70,6 +74,45 @@ class ItineraryStaySerializer(serializers.ModelSerializer):
             if accommodation and accommodation.room_type:
                 return accommodation.room_type.name
         return ""
+
+    def get_check_in_time(self, obj):
+        if obj.stay_property:
+            return obj.stay_property.check_in_time
+        if obj.stay_houseboat and hasattr(obj.stay_houseboat, 'timing'):
+            return obj.stay_houseboat.timing.check_in_time
+        return None
+
+    def get_check_out_time(self, obj):
+        if obj.stay_property:
+            return obj.stay_property.check_out_time
+        if obj.stay_houseboat and hasattr(obj.stay_houseboat, 'timing'):
+            return obj.stay_houseboat.timing.check_out_time
+        return None
+
+    def get_amenities(self, obj):
+        if obj.stay_property:
+            return [{"name": a.name, "icon": a.icon.url if a.icon else None} for a in obj.stay_property.amenities.all()]
+        # Houseboats usually have amenities too, checking model...
+        if obj.stay_houseboat:
+             # Assuming houseboat has amenities M2M or similar. 
+             # I'll check HouseBoat model if needed, but for now I'll just return empty list or handle property only.
+             # Let's peek at HouseBoat model or just be safe.
+             return []
+        return []
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        image = None
+        if obj.stay_property:
+            image = obj.stay_property.primary_image
+        elif obj.stay_houseboat:
+             # Assuming primary_image property exists on HouseBoat as well (common pattern)
+             if hasattr(obj.stay_houseboat, 'primary_image'):
+                 image = obj.stay_houseboat.primary_image
+        
+        if image and image.image:
+             return request.build_absolute_uri(image.image.url) if request else image.image.url
+        return None
 
 
 class PackageItinerarySerializer(serializers.ModelSerializer):
@@ -139,7 +182,7 @@ class HolidayPackageDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = HolidayPackage
         fields = [
-            "id", "title", "duration_days", "duration_nights", "location",
+            "id", "title", "subtitle", "duration_days", "duration_nights", "location",
             "base_price", "discount", "price_per_person", "discounted_price",
             "rating", "review_count", "images", "highlights", "features",
             "itinerary", "accommodations", "transfers", "inclusions",

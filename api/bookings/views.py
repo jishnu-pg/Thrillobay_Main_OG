@@ -45,11 +45,13 @@ class BookingReviewAPIView(APIView):
             items_data=items_data,
             check_in=check_in,
             check_out=check_out,
-            coupon_code=coupon_code
+            coupon_code=coupon_code,
+            is_insurance_opted=booking.is_insurance_opted
         )
         
         # Update booking total amount with the final calculated total (including taxes/coupons)
         booking.total_amount = pricing_data["final_total"]
+        booking.insurance_amount = pricing_data["insurance_fee"]
         booking.save()
         
         # Prepare response (Only return booking_id as requested)
@@ -102,6 +104,10 @@ class BookingReviewAPIView(APIView):
                 item_dict["activity_id"] = item.activity.id
             elif booking.booking_type == "cab" and item.cab:
                 item_dict["cab_id"] = item.cab.id
+                item_dict["pickup_location"] = item.pickup_location
+                item_dict["drop_location"] = item.drop_location
+                item_dict["pickup_datetime"] = item.pickup_datetime
+                item_dict["trip_type"] = item.trip_type
             elif booking.booking_type == "houseboat" and item.houseboat:
                 item_dict["houseboat_id"] = item.houseboat.id
                 
@@ -117,7 +123,8 @@ class BookingReviewAPIView(APIView):
             items_data=items_data,
             check_in=check_in,
             check_out=check_out,
-            coupon_code=coupon_code
+            coupon_code=coupon_code,
+            is_insurance_opted=booking.is_insurance_opted
         )
         
         # Prepare response
